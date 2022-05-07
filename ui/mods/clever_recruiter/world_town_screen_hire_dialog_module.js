@@ -11,17 +11,17 @@ WorldTownScreenHireDialogModule.prototype.createDIV = function (_parentDiv)
 {
 	CleverRecruiter.WorldTownScreenHireDialogModule_createDIV.call(this, _parentDiv);
 	var self = this;
-	// this.mDetailsPanel.TryoutButton.findButtonText().html(MSU.getSettingValue(CleverRecruiter.ID, CleverRecruiter.ModeID) == "Standard" ? "Dismiss" : "Try out");
+	// this.mDetailsPanel.TryoutButton.findButtonText().html(MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard" ? "Dismiss" : "Try out");
 
 
 	this.mDetailsPanel.TryoutButton.bindFirst('click', function(_event)
 	{
 		console.error("hi")
-		switch(MSU.getSettingValue(CleverRecruiter.ID, CleverRecruiter.ModeID))
+		switch(MSU.getSettingValue(CleverRecruiter.ID, "Mode"))
 		{
 			case "Alternate":
 			case "Lite":
-				if (!MSU.getSettingValue(CleverRecruiter.ID, CleverRecruiter.ShowDismiss) || !this.mSelectedEntry.data('entry')["IsTryoutDone"]) break;
+				if (!MSU.getSettingValue(CleverRecruiter.ID, CleverRecruiter.ShowDismiss) || !self.mSelectedEntry.data('entry')["IsTryoutDone"]) break;
 			case "Standard":
 				_event.stopImmediatePropagation();
 				self.CleverRecruiter_dimissSelectedEntry();
@@ -32,13 +32,11 @@ WorldTownScreenHireDialogModule.prototype.createDIV = function (_parentDiv)
 CleverRecruiter.WorldTownScreenHireDialogModule_updateDetailsPanel = WorldTownScreenHireDialogModule.prototype.updateDetailsPanel;
 WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_element)
 {
-	console.error("updateDetailsPanel0")
 	CleverRecruiter.WorldTownScreenHireDialogModule_updateDetailsPanel.call(this, _element);
-	console.error("updateDetailsPanel" + _element + " + " + _element.length);
 	if (_element === null || _element.length == 0) return;
 	var data = _element.data('entry');
 
-	if (MSU.getSettingValue(CleverRecruiter.ID, CleverRecruiter.ModeID) == "Standard")
+	if (MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard")
 	{
 		var icon = this.mDetailsPanel.CharacterTraitsContainer.find('[src="' + Path.GFX + Asset.ICON_UNKNOWN_TRAITS + '"]:first')
 		icon.unbindTooltip();
@@ -60,7 +58,7 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 		}
 	}
 
-	if (MSU.getSettingValue(CleverRecruiter.ID, CleverRecruiter.ModeID) != "Lite")
+	if (MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard" || MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Alternate" && !data['IsTryoutDone'])
 	{
 		for(var i = 0; i < data.Traits.length; ++i)
 		{
@@ -83,13 +81,13 @@ WorldTownScreenHireDialogModule.prototype.updateListEntryValues = function()
 	    var traitsContainer = entry.find('.is-traits-container');
 	    var data = entry.data('entry');
 	    var initialMoneyCost = data['InitialMoneyCost'];
-	    if (MSU.getSettingValue(CleverRecruiter.ID, CleverRecruiter.ModeID) == "Standard")
+	    if (MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard")
 	    {
 	    	var icon = traitsContainer.find('[src="' + Path.GFX + Asset.ICON_UNKNOWN_TRAITS + '"]:first')
 	    	icon.unbindTooltip();
 	    	icon.remove();
 	    }
-	    if (MSU.getSettingValue(CleverRecruiter.ID, CleverRecruiter.ModeID) != "Lite")
+	    if (MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard" || MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Alternate" && !data['IsTryoutDone'])
 	    {
 	    	for(var i = 0; i < data.Traits.length; ++i)
 	    	{
@@ -109,7 +107,7 @@ WorldTownScreenHireDialogModule.prototype.CleverRecruiter_dimissSelectedEntry = 
 		var data = this.mSelectedEntry.data('entry');
 		if ('ID' in data && data['ID'] !== null)
 		{
-			this.CleverRecruiter_notifyBackendPaidDismiss(data['ID'], function (_data)
+			this.CleverRecruiter_notifyBackendPaidDismissRosterEntity(data['ID'], function (_data)
 			{
 				if (_data.Result != 0)
 				{
@@ -133,4 +131,9 @@ WorldTownScreenHireDialogModule.prototype.CleverRecruiter_dimissSelectedEntry = 
 			});
 		}
 	}
+}
+
+WorldTownScreenHireDialogModule.prototype.CleverRecruiter_notifyBackendPaidDismissRosterEntity = function(_entityID, _callback)
+{
+	SQ.call(this.mSQHandle, "CleverRecruiter_onPaidDismissRosterEntity", _entityID, _callback);
 }

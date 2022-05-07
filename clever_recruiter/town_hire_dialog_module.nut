@@ -21,7 +21,7 @@
 			};
 		}
 		::World.getRoster(this.m.RosterID).remove(entity);
-		::World.Assets.addMoney(-tryoutCost);
+		if (::CleverRecruiter.Mod.ModSettings.getSetting("Mode").getValue() == "Standard") ::World.Assets.addMoney(-tryoutCost);
 
 		if (this.World.getRoster(this.m.RosterID).getSize() == 0)
 		{

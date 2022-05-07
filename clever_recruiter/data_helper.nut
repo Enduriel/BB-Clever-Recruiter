@@ -4,7 +4,6 @@
 	local convertEntityHireInformationToUIData = o.convertEntityHireInformationToUIData;
 	o.convertEntityHireInformationToUIData = function( _entity )
 	{
-		::logInfo("convertEntityHireInformationToUIData");
 		local ret = convertEntityHireInformationToUIData(_entity);
 		if (!_entity.isTryoutDone())
 		{
@@ -34,7 +33,7 @@
 				];
 				traits = _entity.getSkills().getSkillsByFunction(function(_skill)
 				{
-					return allowedTraits.find(_skill) != null;
+					return allowedTraits.find(_skill.getID()) != null;
 				});
 			}
 			else if (::CleverRecruiter.Mod.ModSettings.getSetting("Mode").getValue() == "Standard")
