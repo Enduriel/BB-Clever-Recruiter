@@ -15,7 +15,7 @@
 	::CleverRecruiter.Mod <- ::MSU.Class.Mod(::CleverRecruiter.ID, ::CleverRecruiter.Version, ::CleverRecruiter.Name);
 
 	local page = ::CleverRecruiter.Mod.ModSettings.addPage("Main");
-	page.addEnumSetting("Mode", "Standard", ["Standard", "Alternate", "Lite"], null, "Standard:\ndefault\n\nAlternate:\nBasic info always visible\n\nLite:\nRequires tryout");
+	page.addEnumSetting("Mode", "Standard", ["Standard", "Alternate", "Lite", "Liter"], null, "Standard:\ndefault\n\nAlternate:\nBasic info always visible\n\nLite:\nRequires tryout");
 	page.addBooleanSetting("Dismiss", true, "Add Dismiss Button", "Adds a dismiss button to throw a brother out of the hiring roster after you've tried them out (does nothing in Standard mode)")
 
 	::include("clever_recruiter/town_hire_dialog_module");

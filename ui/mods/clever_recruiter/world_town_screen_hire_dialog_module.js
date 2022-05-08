@@ -119,25 +119,32 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 		}
 	}
 
-	if (data['IsTryoutDone'] || MSU.getSettingValue(CleverRecruiter.ID, "Mode") != "Lite")
+	var mode = MSU.getSettingValue(CleverRecruiter.ID, "Mode");
+	var value;
+	var talent;
+
+	for (var i = 0; i < this.mCleverRecruiter.Properties.length; i++)
 	{
-		this.mCleverRecruiter.Grid.removeClass('display-none').addClass('display-block')
-		for (var i = 0; i < this.mCleverRecruiter.Properties.length; i++)
+		if (mode == "Standard" || mode == "Alternate" || data['IsTryoutDone'] && mode == "Lite" || (mode == "Liter" && data['IsTryoutDone'] && data.RandAttribute == i))
 		{
-			this.mCleverRecruiter.Properties[i].Text.html(data.Properties[this.mCleverRecruiter.Properties[i].ID][0] + '/' + data.Properties[this.mCleverRecruiter.Properties[i].ID][1]);
-			if (data['IsTryoutDone'] || MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard")
-			{
-				this.mCleverRecruiter.Properties[i].Talents.attr('src', Path.GFX + 'ui/icons/talent_' + data.Properties[this.mCleverRecruiter.Properties[i].ID][2] + '.png')
-			}
-			else
-			{
-				this.mCleverRecruiter.Properties[i].Talents.attr('src', Path.GFX + 'ui/icons/talent_0.png')
-			}
+			value = data.Properties[this.mCleverRecruiter.Properties[i].ID][0]
 		}
-	}
-	else
-	{
-		this.mCleverRecruiter.Grid.removeClass('display-block').addClass('display-none')
+		else
+		{
+			value = "?"
+		}
+
+		if (mode == "Standard" || (data['IsTryoutDone'] && (mode == "Alternate" || mode == "Lite" || (mode == "Liter" && data.RandTalent == i))))
+		{
+			talent = data.Properties[this.mCleverRecruiter.Properties[i].ID][2]
+		}
+		else
+		{
+			talent = 0;
+		}
+
+		this.mCleverRecruiter.Properties[i].Text.html(value + '/' + data.Properties[this.mCleverRecruiter.Properties[i].ID][1]);
+		this.mCleverRecruiter.Properties[i].Talents.attr('src', Path.GFX + 'ui/icons/talent_' + talent + '.png')
 	}
 }
 

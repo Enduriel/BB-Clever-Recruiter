@@ -46,19 +46,38 @@
 			}
 		}
 
-		if (_entity.isTryoutDone() || ::CleverRecruiter.Mod.ModSettings.getSetting("Mode").getValue() != "Lite")
-		{
-			ret.Properties <- {};
-			local backgroundProperties = _entity.getSkills().getAllSkillsOfType(::Const.SkillType.Background)[0].onChangeAttributes();
+		ret.Properties <- {};
+		local backgroundProperties = _entity.getSkills().getAllSkillsOfType(::Const.SkillType.Background)[0].onChangeAttributes();
 
-			foreach (ID, property in ::CleverRecruiter.BaseProperties)
-			{
-				ret.Properties[ID] <- array(3);
-				ret.Properties[ID][0] = _entity.getBaseProperties()[ID];
-				ret.Properties[ID][1] = backgroundProperties[ID][1] + property;
-				ret.Properties[ID][2] = _entity.getTalents()[::Const.Attributes[ID == "Stamina" ? "Fatigue" : ID]];
-			}
+		foreach (ID, property in ::CleverRecruiter.BaseProperties)
+		{
+			ret.Properties[ID] <- array(3);
+			ret.Properties[ID][0] = _entity.getBaseProperties()[ID];
+			ret.Properties[ID][1] = backgroundProperties[ID][1] + property;
+			ret.Properties[ID][2] = _entity.getTalents()[::Const.Attributes[ID == "Stamina" ? "Fatigue" : ID]];
 		}
+
+		if (::CleverRecruiter.Mod.ModSettings.getSetting("Mode").getValue() == "Liter")
+		{
+			if (!_entity.getFlags().has("CleverRecruiter_RandAttribute"))
+			{
+				_entity.getFlags().add("CleverRecruiter_RandAttribute", ::Math.rand(0, ::CleverRecruiter.BaseProperties.len() - 1))
+			}
+			if (!_entity.getFlags().has("CleverRecruiter_RandTalent"))
+			{
+				local hasTalents = [];
+				local i = 0;
+				foreach (ID, property in ::CleverRecruiter.BaseProperties)
+				{
+					if (ret.Properties[ID][2] != 0) hasTalents.push(i);
+					i++;
+				}
+				_entity.getFlags().add("CleverRecruiter_RandTalent", ::Math.randArray(hasTalents))
+			}
+			ret.RandAttribute <- _entity.getFlags().getAsInt("CleverRecruiter_RandAttribute")
+			ret.RandTalent <- _entity.getFlags().getAsInt("CleverRecruiter_RandTalent")
+		}
+
 		return ret;
 	}
 })

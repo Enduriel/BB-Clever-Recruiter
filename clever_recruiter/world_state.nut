@@ -14,16 +14,15 @@
 		::Math.rand = @(_a, _b) _b;
 		tempBackground.buildAttributes();
 		::Math.rand = rand;
-		::CleverRecruiter.BaseProperties = {
-			Hitpoints = tempPlayer.getBaseProperties().Hitpoints,
-			Bravery = tempPlayer.getBaseProperties().Bravery,
-			Stamina = tempPlayer.getBaseProperties().Stamina,
-			MeleeSkill = tempPlayer.getBaseProperties().MeleeSkill,
-			RangedSkill = tempPlayer.getBaseProperties().RangedSkill,
-			MeleeDefense = tempPlayer.getBaseProperties().MeleeDefense,
-			RangedDefense = tempPlayer.getBaseProperties().RangedDefense,
-			Initiative = tempPlayer.getBaseProperties().Initiative
-		}
+		::CleverRecruiter.BaseProperties = ::MSU.Class.OrderedMap();
+		::CleverRecruiter.BaseProperties.Hitpoints <- tempPlayer.getBaseProperties().Hitpoints,
+		::CleverRecruiter.BaseProperties.MeleeSkill <- tempPlayer.getBaseProperties().MeleeSkill,
+		::CleverRecruiter.BaseProperties.Stamina <- tempPlayer.getBaseProperties().Stamina,
+		::CleverRecruiter.BaseProperties.RangedSkill <- tempPlayer.getBaseProperties().RangedSkill,
+		::CleverRecruiter.BaseProperties.Bravery <- tempPlayer.getBaseProperties().Bravery,
+		::CleverRecruiter.BaseProperties.MeleeDefense <- tempPlayer.getBaseProperties().MeleeDefense,
+		::CleverRecruiter.BaseProperties.Initiative <- tempPlayer.getBaseProperties().Initiative
+		::CleverRecruiter.BaseProperties.RangedDefense <- tempPlayer.getBaseProperties().RangedDefense,
 		::World.deleteRoster(::CleverRecruiter.ID);
 	}
 });
