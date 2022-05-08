@@ -34,4 +34,17 @@
 		}
 
 	}
+
+	local onHireRosterEntry = o.onHireRosterEntry;
+	o.onHireRosterEntry = function( _entityID )
+	{
+		local entity = this.findEntityWithinRoster(_entityID);
+
+		if (entity != null && entity.getFlags().has("CleverRecruiter_RandAttribute"))
+		{
+			entity.getFlags().remove("CleverRecruiter_RandAttribute")
+			entity.getFlags().remove("CleverRecruiter_RandTalent")
+		}
+		return onHireRosterEntry(_entityID);
+	}
 });
