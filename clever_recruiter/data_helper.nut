@@ -1,4 +1,3 @@
-::logInfo("convertEntityHireInformationToUIData");
 ::mods_hookNewObjectOnce("ui/global/data_helper", function(o)
 {
 	local convertEntityHireInformationToUIData = o.convertEntityHireInformationToUIData;
@@ -31,17 +30,11 @@
 					"trait.swift",
 					"trait.tiny"
 				];
-				traits = _entity.getSkills().getSkillsByFunction(function(_skill)
-				{
-					return allowedTraits.find(_skill.getID()) != null;
-				});
+				traits = _entity.getSkills().getSkillsByFunction(@(_skill) allowedTraits.find(_skill.getID()) != null);
 			}
 			else if (::CleverRecruiter.Mod.ModSettings.getSetting("Mode").getValue() == "Standard")
 			{
-				traits = _entity.getSkills().getSkillsByFunction(function(_skill)
-				{
-					return _skill.getType() == ::Const.SkillType.Trait;
-				});
+				traits = _entity.getSkills().getSkillsByFunction(@(_skill) _skill.getType() == ::Const.SkillType.Trait);
 			}
 
 			foreach (trait in traits)
@@ -50,6 +43,20 @@
 					id = trait.getID(),
 					icon = trait.getIconColored()
 				});
+			}
+		}
+
+		if (_entity.isTryoutDone() || ::CleverRecruiter.Mod.ModSettings.getSetting("Mode").getValue() != "Lite")
+		{
+			ret.Properties <- {};
+			local backgroundProperties = _entity.getSkills().getAllSkillsOfType(::Const.SkillType.Background)[0].onChangeAttributes();
+
+			foreach (ID, property in ::CleverRecruiter.BaseProperties)
+			{
+				ret.Properties[ID] <- array(3);
+				ret.Properties[ID][0] = _entity.getBaseProperties()[ID];
+				ret.Properties[ID][1] = backgroundProperties[ID][1] + property;
+				ret.Properties[ID][2] = _entity.getTalents()[::Const.Attributes[ID == "Stamina" ? "Fatigue" : ID]];
 			}
 		}
 		return ret;

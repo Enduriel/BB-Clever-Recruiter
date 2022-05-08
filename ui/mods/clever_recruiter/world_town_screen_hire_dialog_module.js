@@ -4,19 +4,13 @@ var CleverRecruiter = {
 	ShowDismiss : "Dismiss"
 }
 
-
-
 CleverRecruiter.WorldTownScreenHireDialogModule_createDIV = WorldTownScreenHireDialogModule.prototype.createDIV
 WorldTownScreenHireDialogModule.prototype.createDIV = function (_parentDiv)
 {
 	CleverRecruiter.WorldTownScreenHireDialogModule_createDIV.call(this, _parentDiv);
 	var self = this;
-	// this.mDetailsPanel.TryoutButton.findButtonText().html(MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard" ? "Dismiss" : "Try out");
-
-
 	this.mDetailsPanel.TryoutButton.bindFirst('click', function(_event)
 	{
-		console.error("hi")
 		switch(MSU.getSettingValue(CleverRecruiter.ID, "Mode"))
 		{
 			case "Alternate":
@@ -26,7 +20,64 @@ WorldTownScreenHireDialogModule.prototype.createDIV = function (_parentDiv)
 				_event.stopImmediatePropagation();
 				self.CleverRecruiter_dimissSelectedEntry();
 		}
-	})
+	});
+
+	this.mCleverRecruiter = {
+		Grid : $('<div class="clever-recruiter-stats-grid"/>'),
+		Properties : [
+			{
+				ID : "Hitpoints",
+				IconAsset : Asset.ICON_HEALTH
+			},
+			{
+				ID : "MeleeSkill",
+				IconAsset : Asset.ICON_MELEE_SKILL
+			},
+			{
+				ID : "Stamina",
+				IconAsset : Asset.ICON_FATIGUE
+			},
+			{
+				ID : "RangedSkill",
+				IconAsset : Asset.ICON_RANGE_SKILL
+			},
+			{
+				ID : "Bravery",
+				IconAsset : Asset.ICON_BRAVERY
+			},
+			{
+				ID : "MeleeDefense",
+				IconAsset : Asset.ICON_MELEE_DEFENCE
+			},
+			{
+				ID : "Initiative",
+				IconAsset : Asset.ICON_INITIATIVE
+			},
+			{
+				ID : "RangedDefense",
+				IconAsset : Asset.ICON_RANGE_DEFENCE
+			}
+		]
+	}
+	var row;
+	var container;
+	for (var i = 0; i < this.mCleverRecruiter.Properties.length; i++)
+	{
+		if (i % 2 == 0)
+		{
+			row = $('<div class="stat-row"/>');
+			this.mCleverRecruiter.Grid.append(row);
+		}
+		container = $('<div class="stat-container"/>');
+		row.append(container)
+		container.append($('<img class="stat-icon" src="' + Path.GFX + this.mCleverRecruiter.Properties[i].IconAsset + '"/>'));
+		this.mCleverRecruiter.Properties[i].Text = $('<div class="stat-text"/>');
+		container.append(this.mCleverRecruiter.Properties[i].Text);
+		this.mCleverRecruiter.Properties[i].Talents = $('<img class="talent" src="' + Path.GFX + 'ui/icons/talent_0.png"/>');
+		container.append(this.mCleverRecruiter.Properties[i].Talents)
+	}
+
+	this.mDetailsPanel.CharacterBackgroundTextScrollContainer.before(this.mCleverRecruiter.Grid);
 }
 
 CleverRecruiter.WorldTownScreenHireDialogModule_updateDetailsPanel = WorldTownScreenHireDialogModule.prototype.updateDetailsPanel;
@@ -67,6 +118,23 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 		    this.mDetailsPanel.CharacterTraitsContainer.append(icon);
 		}
 	}
+
+	if (data['IsTryoutDone'] || MSU.getSettingValue(CleverRecruiter.ID, "Mode") != "Lite")
+	{
+		this.mCleverRecruiter.Grid.removeClass('display-none').addClass('display-block')
+		for (var i = 0; i < this.mCleverRecruiter.Properties.length; i++)
+		{
+			this.mCleverRecruiter.Properties[i].Text.html(data.Properties[this.mCleverRecruiter.Properties[i].ID][0] + '/' + data.Properties[this.mCleverRecruiter.Properties[i].ID][1]);
+			if (data['IsTryoutDone'] || MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard")
+			{
+				this.mCleverRecruiter.Properties[i].Talents.attr('src', Path.GFX + 'ui/icons/talent_' + data.Properties[this.mCleverRecruiter.Properties[i].ID][2] + '.png')
+			}
+		}
+	}
+	else
+	{
+		this.mCleverRecruiter.Grid.removeClass('display-block').addClass('display-none')
+	}
 }
 
 CleverRecruiter.WorldTownScreenHireDialogModule_updateListEntryValues = WorldTownScreenHireDialogModule.prototype.updateListEntryValues;
@@ -77,10 +145,8 @@ WorldTownScreenHireDialogModule.prototype.updateListEntryValues = function()
     this.mListContainer.findListScrollContainer().find('.list-entry').each(function(index, element)
 	{
 		var entry = $(element);
-	    var initialMoneyCostElement = entry.find('.is-initial-money-cost');
 	    var traitsContainer = entry.find('.is-traits-container');
 	    var data = entry.data('entry');
-	    var initialMoneyCost = data['InitialMoneyCost'];
 	    if (MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard")
 	    {
 	    	var icon = traitsContainer.find('[src="' + Path.GFX + Asset.ICON_UNKNOWN_TRAITS + '"]:first')

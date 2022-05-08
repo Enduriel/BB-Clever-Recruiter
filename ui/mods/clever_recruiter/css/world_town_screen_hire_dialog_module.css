@@ -1,0 +1,31 @@
+.world-town-screen > .l-hire-dialog-container .content .details-container .column.is-character-background-container .row.is-bottom .clever-recruiter-stats-grid {
+	position: relative;
+	top: -1.1rem;
+	margin-bottom: -0.7rem;
+}
+
+.world-town-screen > .l-hire-dialog-container .content .details-container .column.is-character-background-container .row.is-bottom .clever-recruiter-stats-grid .stat-row {
+	position: relative;
+	width: 100%;
+}
+
+.world-town-screen > .l-hire-dialog-container .content .details-container .column.is-character-background-container .row.is-bottom .clever-recruiter-stats-grid .stat-row .stat-container {
+	position: relative;
+	width: 50%;
+	display: inline-block;
+}
+
+.world-town-screen > .l-hire-dialog-container .content .details-container .column.is-character-background-container .row.is-bottom .clever-recruiter-stats-grid .stat-row .stat-container .stat-icon {
+	position: relative;
+	top: 1rem;
+}
+
+.world-town-screen > .l-hire-dialog-container .content .details-container .column.is-character-background-container .row.is-bottom .clever-recruiter-stats-grid .stat-row .stat-container .stat-text {
+	display: inline-block;
+	margin-left: 0.4rem;
+}
+
+.world-town-screen > .l-hire-dialog-container .content .details-container .column.is-character-background-container .row.is-bottom .clever-recruiter-stats-grid .stat-row .stat-container .talent {
+	display: inline-block;
+	top: 1rem;
+}
