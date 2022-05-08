@@ -129,6 +129,10 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 			{
 				this.mCleverRecruiter.Properties[i].Talents.attr('src', Path.GFX + 'ui/icons/talent_' + data.Properties[this.mCleverRecruiter.Properties[i].ID][2] + '.png')
 			}
+			else
+			{
+				this.mCleverRecruiter.Properties[i].Talents.attr('src', Path.GFX + 'ui/icons/talent_0.png')
+			}
 		}
 	}
 	else

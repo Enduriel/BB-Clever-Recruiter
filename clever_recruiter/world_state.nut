@@ -24,7 +24,6 @@
 			RangedDefense = tempPlayer.getBaseProperties().RangedDefense,
 			Initiative = tempPlayer.getBaseProperties().Initiative
 		}
-		::MSU.Log.printData(::CleverRecruiter.BaseProperties, 2)
 		::World.deleteRoster(::CleverRecruiter.ID);
 	}
 });
