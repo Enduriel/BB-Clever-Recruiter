@@ -15,6 +15,7 @@ WorldTownScreenHireDialogModule.prototype.createDIV = function (_parentDiv)
 		{
 			case "Alternate":
 			case "Lite":
+			case "Liter":
 				if (!MSU.getSettingValue(CleverRecruiter.ID, CleverRecruiter.ShowDismiss) || !self.mSelectedEntry.data('entry')["IsTryoutDone"]) break;
 			case "Standard":
 				_event.stopImmediatePropagation();
