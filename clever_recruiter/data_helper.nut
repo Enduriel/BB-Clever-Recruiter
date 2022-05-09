@@ -72,7 +72,7 @@
 					if (ret.Properties[ID][2] != 0) hasTalents.push(i);
 					i++;
 				}
-				_entity.getFlags().add("CleverRecruiter_RandTalent", ::Math.randArray(hasTalents))
+				_entity.getFlags().add("CleverRecruiter_RandTalent", ::MSU.Array.rand(hasTalents))
 			}
 			ret.RandAttribute <- _entity.getFlags().getAsInt("CleverRecruiter_RandAttribute")
 			ret.RandTalent <- _entity.getFlags().getAsInt("CleverRecruiter_RandTalent")
