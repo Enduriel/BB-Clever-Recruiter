@@ -1,7 +1,7 @@
 ::CleverRecruiter <- {
 	ID = "mod_clever_recruiter",
 	Name = "Clever Recruiter",
-	Version = "1.0.0-beta.1",
+	Version = "1.0.0-beta.2",
 	BaseProperties = null
 }
 
