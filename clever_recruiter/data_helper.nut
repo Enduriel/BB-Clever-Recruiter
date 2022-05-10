@@ -4,6 +4,8 @@
 	o.convertEntityHireInformationToUIData = function( _entity )
 	{
 		local ret = convertEntityHireInformationToUIData(_entity);
+
+		ret.CleverRecruiter_IsLegends <- ::mods_getRegisteredMod("mod_legends") != null
 		if (!_entity.isTryoutDone())
 		{
 			local traits = []

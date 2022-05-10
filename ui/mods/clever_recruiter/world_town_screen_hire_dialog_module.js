@@ -88,7 +88,9 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 	if (_element === null || _element.length == 0) return;
 	var data = _element.data('entry');
 
-	if (MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard")
+	var mode = MSU.getSettingValue(CleverRecruiter.ID, "Mode");
+
+	if (mode == "Standard")
 	{
 		var icon = this.mDetailsPanel.CharacterTraitsContainer.find('[src="' + Path.GFX + Asset.ICON_UNKNOWN_TRAITS + '"]:first')
 		icon.unbindTooltip();
@@ -110,17 +112,16 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 		}
 	}
 
-	if (MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard" || MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Alternate" && !data['IsTryoutDone'])
+	if (mode == "Standard" || mode == "Alternate" && !data['IsTryoutDone'])
 	{
 		for(var i = 0; i < data.Traits.length; ++i)
 		{
-		    var icon = $('<img src="' + Path.GFX + data.Traits[i].icon + '"/>');
-		    icon.bindTooltip({ contentType: 'status-effect', entityId: data.ID, statusEffectId: data.Traits[i].id });
-		    this.mDetailsPanel.CharacterTraitsContainer.append(icon);
+			var icon = $('<img src="' + Path.GFX + data.Traits[i].icon + '"/>');
+			icon.bindTooltip({ contentType: 'status-effect', entityId: data.ID, statusEffectId: data.Traits[i].id });
+			this.mDetailsPanel.CharacterTraitsContainer.append(icon);
 		}
 	}
 
-	var mode = MSU.getSettingValue(CleverRecruiter.ID, "Mode");
 	var value;
 	var talent;
 
@@ -147,6 +148,14 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 		this.mCleverRecruiter.Properties[i].Text.html(value + '/' + data.Properties[this.mCleverRecruiter.Properties[i].ID][1]);
 		this.mCleverRecruiter.Properties[i].Talents.attr('src', Path.GFX + 'ui/icons/talent_' + talent + '.png')
 	}
+
+	if (!data['IsTryoutDone'] && data.CleverRecruiter_IsLegends && mode == "Standard")
+	{
+		var perkTreesImg = this.mDetailsPanel.CharacterTraitsContainer.find('img[src="' + Path.GFX + 'ui/icons/unknown_perks.png"]:first');
+		perkTreesImg.attr('src', Path.GFX + 'ui/icons/known_perks.png');
+		perkTreesImg.unbindTooltip();
+		perkTreesImg.bindTooltip({ contentType: 'ui-element', elementId: TooltipIdentifier.WorldTownScreen.HireDialogModule.KnownPerks, entityId: data.ID });
+	}
 }
 
 CleverRecruiter.WorldTownScreenHireDialogModule_updateListEntryValues = WorldTownScreenHireDialogModule.prototype.updateListEntryValues;
@@ -154,26 +163,34 @@ WorldTownScreenHireDialogModule.prototype.updateListEntryValues = function()
 {
 	CleverRecruiter.WorldTownScreenHireDialogModule_updateListEntryValues.call(this);
 	var self = this;
-    this.mListContainer.findListScrollContainer().find('.list-entry').each(function(index, element)
+	this.mListContainer.findListScrollContainer().find('.list-entry').each(function(index, element)
 	{
 		var entry = $(element);
-	    var traitsContainer = entry.find('.is-traits-container');
-	    var data = entry.data('entry');
-	    if (MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard")
-	    {
-	    	var icon = traitsContainer.find('[src="' + Path.GFX + Asset.ICON_UNKNOWN_TRAITS + '"]:first')
-	    	icon.unbindTooltip();
-	    	icon.remove();
-	    }
-	    if (MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard" || MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Alternate" && !data['IsTryoutDone'])
-	    {
-	    	for(var i = 0; i < data.Traits.length; ++i)
-	    	{
-	    	    var icon = $('<img src="' + Path.GFX + data.Traits[i].icon + '"/>');
-	    	    icon.bindTooltip({ contentType: 'status-effect', entityId: data.ID, statusEffectId: data.Traits[i].id });
-	    	    traitsContainer.append(icon);
-	    	}
-	    }
+		var traitsContainer = entry.find('.is-traits-container');
+		var data = entry.data('entry');
+		if (MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard")
+		{
+			var icon = traitsContainer.find('[src="' + Path.GFX + Asset.ICON_UNKNOWN_TRAITS + '"]:first')
+			icon.unbindTooltip();
+			icon.remove();
+		}
+		if (MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard" || MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Alternate" && !data['IsTryoutDone'])
+		{
+			for(var i = 0; i < data.Traits.length; ++i)
+			{
+				var icon = $('<img src="' + Path.GFX + data.Traits[i].icon + '"/>');
+				icon.bindTooltip({ contentType: 'status-effect', entityId: data.ID, statusEffectId: data.Traits[i].id });
+				traitsContainer.append(icon);
+			}
+		}
+
+		if (!data['IsTryoutDone'] && data.CleverRecruiter_IsLegends && MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard" )
+		{
+			var perkTreesImg = traitsContainer.find('img[src="' + Path.GFX + 'ui/icons/unknown_perks.png"]:first');
+			perkTreesImg.attr('src', Path.GFX + 'ui/icons/known_perks.png');
+			perkTreesImg.unbindTooltip();
+			perkTreesImg.bindTooltip({ contentType: 'ui-element', elementId: TooltipIdentifier.WorldTownScreen.HireDialogModule.KnownPerks, entityId: data.ID });
+		}
 	});
 }
 
