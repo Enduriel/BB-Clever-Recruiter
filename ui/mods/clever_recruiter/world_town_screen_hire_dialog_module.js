@@ -14,6 +14,7 @@ WorldTownScreenHireDialogModule.prototype.createDIV = function (_parentDiv)
 		switch(MSU.getSettingValue(CleverRecruiter.ID, "Mode"))
 		{
 			case "Alternate":
+			case "Talents":
 			case "Lite":
 			case "Liter":
 				if (!MSU.getSettingValue(CleverRecruiter.ID, CleverRecruiter.ShowDismiss) || !self.mSelectedEntry.data('entry')["IsTryoutDone"]) break;
@@ -136,7 +137,7 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 			value = "?"
 		}
 
-		if (mode == "Standard" || (data['IsTryoutDone'] && (mode == "Alternate" || mode == "Lite" || (mode == "Liter" && data.RandTalent == i))))
+		if (mode == "Standard" || (data['IsTryoutDone'] && (mode == "Alternate" || mode == "Lite" || mode == "Talents" || (mode == "Liter" && data.RandTalent == i))))
 		{
 			talent = data.Properties[this.mCleverRecruiter.Properties[i].ID][2]
 		}
