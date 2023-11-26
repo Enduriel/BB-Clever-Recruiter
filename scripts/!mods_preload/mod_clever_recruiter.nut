@@ -16,6 +16,10 @@
 
 	::CleverRecruiter.Mod <- ::MSU.Class.Mod(::CleverRecruiter.ID, ::CleverRecruiter.Version, ::CleverRecruiter.Name);
 
+	::CleverRecruiter.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.GitHub, "https://github.com/Enduriel/BB-Clever-Recruiter");
+	::CleverRecruiter.Mod.Registry.setUpdateSource(::MSU.System.Registry.ModSourceDomain.GitHub);
+	::CleverRecruiter.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.NexusMods, "https://www.nexusmods.com/battlebrothers/mods/549");
+
 	local page = ::CleverRecruiter.Mod.ModSettings.addPage("Main");
 	page.addEnumSetting("Mode", "Standard", ["Standard", "Alternate", "Lite", "Liter", "Talents"], null, "Standard:\nAll recruit info always visible\n\nAlternate:\nObvious traits visible, attributes visible. Try out shows remaining traits and all talents\n\nLite:\nNothing is normally visible. Try out shows all info.\n\nLiter:\nNothing is normally visible. Try out shows 1 attribute and 1 talent\n\nTalents:\nNothing is normally visible, tryout reveals all talents");
 	page.addBooleanSetting("Dismiss", true, "Add Dismiss Button", "Adds a dismiss button to throw a brother out of the hiring roster after you've tried them out (does nothing in Standard mode)")
