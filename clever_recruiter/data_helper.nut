@@ -1,11 +1,10 @@
-::mods_hookNewObjectOnce("ui/global/data_helper", function(o)
+::CleverRecruiter.HookMod.hook("scripts/ui/global/data_helper", function(q)
 {
-	local convertEntityHireInformationToUIData = o.convertEntityHireInformationToUIData;
-	o.convertEntityHireInformationToUIData = function( _entity )
+	q.convertEntityHireInformationToUIData = @(__original)function( _entity )
 	{
-		local ret = convertEntityHireInformationToUIData(_entity);
+		local ret = __original(_entity);
 
-		ret.CleverRecruiter_IsLegends <- ::mods_getRegisteredMod("mod_legends") != null
+		ret.CleverRecruiter_IsLegends <- ::Hooks.hasMod("mod_legends");
 		if (!_entity.isTryoutDone())
 		{
 			local traits = []

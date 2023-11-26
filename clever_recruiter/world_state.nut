@@ -1,10 +1,8 @@
-::mods_hookExactClass("states/world_state", function (o)
+::CleverRecruiter.HookMod.hook("scripts/states/world_state", function (q)
 {
-	local onInit = o.onInit;
-	o.onInit = function()
+	q.onInit = @(__original) function()
 	{
-		onInit();
-
+		__original();
 		::World.createRoster(::CleverRecruiter.ID);
 		local tempPlayer = ::World.getRoster(::CleverRecruiter.ID).create("scripts/entity/tactical/player");
 		local tempBackground = ::new("scripts/skills/backgrounds/character_background");

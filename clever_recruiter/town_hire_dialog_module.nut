@@ -1,6 +1,6 @@
-::mods_hookExactClass("ui/screens/world/modules/world_town_screen/town_hire_dialog_module", function(o)
+::CleverRecruiter.HookMod.hook("scripts/ui/screens/world/modules/world_town_screen/town_hire_dialog_module", function(q)
 {
-	o.CleverRecruiter_onPaidDismissRosterEntity <- function( _entityID )
+	q.CleverRecruiter_onPaidDismissRosterEntity <- function( _entityID )
 	{
 		local entity = this.findEntityWithinRoster(_entityID)
 
@@ -35,16 +35,15 @@
 
 	}
 
-	local onHireRosterEntry = o.onHireRosterEntry;
-	o.onHireRosterEntry = function( _entityID )
+	q.onHireRosterEntry = @(__original) function( _entityID )
 	{
-		local entity = this.findEntityWithinRoster(_entityID);
+		local entity = this.findEntity__originalWithinRoster(_entityID);
 
 		if (entity != null && entity.getFlags().has("CleverRecruiter_RandAttribute"))
 		{
 			entity.getFlags().remove("CleverRecruiter_RandAttribute")
 			entity.getFlags().remove("CleverRecruiter_RandTalent")
 		}
-		return onHireRosterEntry(_entityID);
+		return __original(_entityID);
 	}
 });

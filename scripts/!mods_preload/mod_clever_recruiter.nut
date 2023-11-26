@@ -5,12 +5,14 @@
 	BaseProperties = null
 }
 
-::mods_registerMod(::CleverRecruiter.ID, ::CleverRecruiter.Version, ::CleverRecruiter.Name);
+::CleverRecruiter.HookMod <- ::Hooks.register(::CleverRecruiter.ID, ::CleverRecruiter.Version, ::CleverRecruiter.Name);
 
-::mods_queue(null, "mod_msu(>=1.0.0-beta), !mod_smart_recruiter, !mod_smart_recruiter_legends, >mod_legends", function()
-{
-	::mods_registerJS("clever_recruiter/world_town_screen_hire_dialog_module.js")
-	::mods_registerCSS("clever_recruiter/css/world_town_screen_hire_dialog_module.css")
+::CleverRecruiter.HookMod.require("mod_msu >= 1.2.0");
+::CleverRecruiter.HookMod.conflictWith("mod_smart_recruiter", "mod_smart_recruiter_legends");
+
+::CleverRecruiter.HookMod.queue(">mod_legends", ">mod_legends_PTR", function() {
+	::Hooks.registerJS("ui/mods/clever_recruiter/world_town_screen_hire_dialog_module.js");
+	::Hooks.registerCSS("ui/mods/clever_recruiter/css/world_town_screen_hire_dialog_module.css");
 
 	::CleverRecruiter.Mod <- ::MSU.Class.Mod(::CleverRecruiter.ID, ::CleverRecruiter.Version, ::CleverRecruiter.Name);
 
@@ -21,4 +23,4 @@
 	::include("clever_recruiter/town_hire_dialog_module");
 	::include("clever_recruiter/world_state");
 	::include("clever_recruiter/data_helper");
-});
+})
