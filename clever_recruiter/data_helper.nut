@@ -1,82 +1,105 @@
 ::CleverRecruiter.HookMod.hook("scripts/ui/global/data_helper", function(q)
 {
-	q.convertEntityHireInformationToUIData = @(__original)function( _entity )
+	q.convertEntityHireInformationToUIData = @(__original) function( _entity )
 	{
 		local ret = __original(_entity);
 
-		ret.CleverRecruiter_IsLegends <- ::Hooks.hasMod("mod_legends");
-		if (!_entity.isTryoutDone())
-		{
-			local traits = []
-			if (::CleverRecruiter.Mod.ModSettings.getSetting("Mode").getValue() == "Alternate")
-			{
-				local allowedTraits = [
-					"trait.asthmatic",
-					"trait.athletic",
-					"trait.cocky",
-					"trait.determined",
-					"trait.dexterous",
-					"trait.dumb",
-					"trait.eagle_eyes",
-					"trait.fat",
-					"trait.greedy",
-					"trait.hesitant",
-					"trait.huge",
-					"trait.impatient",
-					"trait.iron_jaw",
-					"trait.night_owl",
-					"trait.short_sighted",
-					"trait.spartan",
-					"trait.strong",
-					"trait.swift",
-					"trait.tiny"
-				];
-				traits = _entity.getSkills().getSkillsByFunction(@(_skill) allowedTraits.find(_skill.getID()) != null);
-			}
-			else if (::CleverRecruiter.Mod.ModSettings.getSetting("Mode").getValue() == "Standard")
-			{
-				traits = _entity.getSkills().getSkillsByFunction(@(_skill) _skill.getType() == ::Const.SkillType.Trait);
-			}
+		ret.CleverRecruiter <- {
+			Legends = ::Hooks.hasMod("mod_legends"),
+			Traits = [],
+			Attributes = []
+		}
+		local getMySettingValue = @(_id) ::CleverRecruiter.Mod.ModSettings.getSetting(_id).getValue();
 
+		local dataToShow = {
+			Traits = _entity.isTryoutDone() ? "None" : getMySettingValue("TraitInfo"),
+			Attributes = _entity.isTryoutDone() ? getMySettingValue("AttributeInfoPostTryout") : getMySettingValue("AttributeInfoPreTryout")
+		}
+
+		local traits;
+		if (dataToShow.Traits == "All")
+		{
+			traits = _entity.getSkills().getSkillsByFunction(@(_skill) _skill.getType() == ::Const.SkillType.Trait);
+		}
+		else if (dataToShow.Traits == "Alternate")
+		{
+			traits = _entity.getSkills().getSkillsByFunction(@(_skill) ::CleverRecruiter.AlternateTraits.find(_skill.getID()) != null);
+		}
+
+		if (dataToShow.Traits != "None")
+		{
 			foreach (trait in traits)
 			{
-				ret.Traits.push({
+				ret.CleverRecruiter.Traits.push({
 					id = trait.getID(),
 					icon = trait.getIconColored()
 				});
 			}
 		}
 
-		ret.Properties <- {};
-		local backgroundProperties = _entity.getSkills().getAllSkillsOfType(::Const.SkillType.Background)[0].onChangeAttributes();
-
-		foreach (ID, property in ::CleverRecruiter.BaseProperties)
+		if (dataToShow.Attributes != "None")
 		{
-			ret.Properties[ID] <- array(3);
-			ret.Properties[ID][0] = _entity.getBaseProperties()[ID];
-			ret.Properties[ID][1] = backgroundProperties[ID][1] + property;
-			ret.Properties[ID][2] = _entity.getTalents()[::Const.Attributes[ID == "Stamina" ? "Fatigue" : ID]];
-		}
-
-		if (::CleverRecruiter.Mod.ModSettings.getSetting("Mode").getValue() == "Liter")
-		{
-			if (!_entity.getFlags().has("CleverRecruiter_RandAttribute"))
+			local backgroundAttributes = _entity.getSkills().getAllSkillsOfType(::Const.SkillType.Background)[0].onChangeAttributes();
+			foreach (ID, property in ::CleverRecruiter.BaseAttributes)
 			{
-				_entity.getFlags().add("CleverRecruiter_RandAttribute", ::Math.rand(0, ::CleverRecruiter.BaseProperties.len() - 1))
+				ret.CleverRecruiter.Attributes.push([
+					_entity.getBaseProperties()[ID],
+					backgroundAttributes[ID][1] + property,
+					_entity.getTalents()[::Const.Attributes[ID == "Stamina" ? "Fatigue" : ID]]
+				])
 			}
-			if (!_entity.getFlags().has("CleverRecruiter_RandTalent"))
+			if (dataToShow.Attributes == "OnlyNumbers")
 			{
-				local hasTalents = [];
-				local i = 0;
-				foreach (ID, property in ::CleverRecruiter.BaseProperties)
+				foreach (attributeInfo in ret.CleverRecruiter.Attributes)
 				{
-					if (ret.Properties[ID][2] != 0) hasTalents.push(i);
-					i++;
+					attributeInfo[2] = 0;
 				}
-				_entity.getFlags().add("CleverRecruiter_RandTalent", ::MSU.Array.rand(hasTalents))
 			}
-			ret.RandAttribute <- _entity.getFlags().getAsInt("CleverRecruiter_RandAttribute")
-			ret.RandTalent <- _entity.getFlags().getAsInt("CleverRecruiter_RandTalent")
+
+			if (dataToShow.Attributes == "OnlyTalents")
+			{
+				foreach (attributeInfo in ret.CleverRecruiter.Attributes)
+				{
+					attributeInfo[0] = null;
+				}
+			}
+
+			if (dataToShow.Attributes == "Random")
+			{
+				::MSU.Log.printData(_entity.CleverRecruiter_getRandAttributes())
+				if (!_entity.CleverRecruiter_hasRolled())
+					_entity.CleverRecruiter_rollRandoms();
+				::MSU.Log.printData(_entity.CleverRecruiter_getRandAttributes())
+
+				local numAttributesToShow = _entity.isTryoutDone() ? getMySettingValue("NumRandomStatsVisiblePostTryout") : getMySettingValue("NumRandomStatsVisiblePreTryout");
+				local numTalentsToShow = _entity.isTryoutDone() ? getMySettingValue("NumRandomTalentsVisiblePostTryout") : getMySettingValue("NumRandomTalentsVisiblePreTryout");
+
+				local attributes = array(ret.CleverRecruiter.Attributes.len());
+				foreach (i, attributeInfo in ret.CleverRecruiter.Attributes)
+				{
+					if (_entity.CleverRecruiter_getRandAttributes().find(i) + 1 > numAttributesToShow)
+						attributeInfo[0] = null;
+					attributes[i] = [i, attributeInfo];
+				}
+
+				local attributesWithTalents = attributes.map(@(_e) [_entity.CleverRecruiter_getRandTalents().find(_e[0]), _e[1]]);
+				attributesWithTalents.sort(@(_a, _b) _a[0] <=> _b[0])
+				attributesWithTalents.apply(@(_e) _e[1]);
+
+				local j = 0;
+				foreach (i, attributeInfo in attributesWithTalents)
+				{
+					if (j >= numTalentsToShow)
+						attributeInfo[2] = 0;
+					else if (attributeInfo[2] != 0)
+						++j;
+				}
+
+				foreach (attributeIdx, attributeInfo in attributesWithTalents)
+				{
+					_entity.CleverRecruiter_getRandAttributes()
+				}
+			}
 		}
 
 		return ret;

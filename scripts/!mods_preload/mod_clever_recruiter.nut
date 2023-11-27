@@ -1,8 +1,29 @@
 ::CleverRecruiter <- {
 	ID = "mod_clever_recruiter",
 	Name = "Clever Recruiter",
-	Version = "1.0.0",
-	BaseProperties = null
+	Version = "2.0.0-alpha.1",
+	BaseAttributes = null,
+	AlternateTraits = [
+		"trait.asthmatic",
+		"trait.athletic",
+		"trait.cocky",
+		"trait.determined",
+		"trait.dexterous",
+		"trait.dumb",
+		"trait.eagle_eyes",
+		"trait.fat",
+		"trait.greedy",
+		"trait.hesitant",
+		"trait.huge",
+		"trait.impatient",
+		"trait.iron_jaw",
+		"trait.night_owl",
+		"trait.short_sighted",
+		"trait.spartan",
+		"trait.strong",
+		"trait.swift",
+		"trait.tiny"
+	]
 }
 
 ::CleverRecruiter.HookMod <- ::Hooks.register(::CleverRecruiter.ID, ::CleverRecruiter.Version, ::CleverRecruiter.Name);
@@ -10,7 +31,7 @@
 ::CleverRecruiter.HookMod.require("mod_msu >= 1.2.0");
 ::CleverRecruiter.HookMod.conflictWith("mod_smart_recruiter", "mod_smart_recruiter_legends");
 
-::CleverRecruiter.HookMod.queue(">mod_legends", ">mod_legends_PTR", function() {
+::CleverRecruiter.HookMod.queue(">mod_msu", ">mod_legends", ">mod_legends_PTR", function() {
 	::Hooks.registerJS("ui/mods/clever_recruiter/world_town_screen_hire_dialog_module.js");
 	::Hooks.registerCSS("ui/mods/clever_recruiter/css/world_town_screen_hire_dialog_module.css");
 
@@ -20,11 +41,46 @@
 	::CleverRecruiter.Mod.Registry.setUpdateSource(::MSU.System.Registry.ModSourceDomain.GitHub);
 	::CleverRecruiter.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.NexusMods, "https://www.nexusmods.com/battlebrothers/mods/549");
 
-	local page = ::CleverRecruiter.Mod.ModSettings.addPage("Main");
-	page.addEnumSetting("Mode", "Standard", ["Standard", "Alternate", "Lite", "Liter", "Talents"], null, "Standard:\nAll recruit info always visible\n\nAlternate:\nObvious traits visible, attributes visible. Try out shows remaining traits and all talents\n\nLite:\nNothing is normally visible. Try out shows all info.\n\nLiter:\nNothing is normally visible. Try out shows 1 attribute and 1 talent\n\nTalents:\nNothing is normally visible, tryout reveals all talents");
-	page.addBooleanSetting("Dismiss", true, "Add Dismiss Button", "Adds a dismiss button to throw a brother out of the hiring roster after you've tried them out (does nothing in Standard mode)")
+	local page = ::CleverRecruiter.Mod.ModSettings.addPage("General");
+
+	page.addEnumSetting("TraitInfo", "All", ["All", "Alternate", "None"], "Visible Traits Before Tryout", "All:\nAll recruit traits always visible\n\nAlternate:\nObvious traits visible without tryout\n\nNone:\nNo traits visible without tryout");
+	page.addEnumSetting("AttributeInfoPreTryout", "Full", ["Full", "OnlyNumbers", "OnlyTalents", "Random", "None"], "Attribute Information Before Tryout", "Full:\nAll stats and stars visible before tryout\n\nOnlyNumbers:\nOnly stat numbers visible before tryout\n\nOnlyStars:\nOnly talents (stars) visible before tryout\n\nNone: Nothing visible before tryout");
+	page.addRangeSetting("NumRandomStatsVisiblePreTryout", 1, 0, 8, 1, "Random Stats Visible Before Tryout", "Does nothing if 'Attribute Information Before Tryout' is not set to Random, otherwise determines the number of random stats which will be shown before tryout");
+	page.addRangeSetting("NumRandomTalentsVisiblePreTryout", 1, 0, 8, 1, "Random Talents Visible Before Tryout", "Does nothing if 'Attribute Information Before Tryout' is not set to Random, otherwise determines the number of random talents which will be shown before tryout");
+
+	page.addEnumSetting("AttributeInfoPostTryout", "Full", ["Full", "OnlyNumbers", "Random", "None"], "Attribute Information After Tryout", "Full:\nAll stars and stats visible after tryout\n\nOnlyNumbers:\nOnly stat numbers visible after tryout\n\nNone:\nNothing visibly after tryout.");
+	page.addRangeSetting("NumRandomStatsVisiblePostTryout", 1, 0, 8, 1, "Random Stats Visible After Tryout", "Does nothing if 'Attribute Information After Tryout' is not set to Random, otherwise determines the number of random stats which will be shown after tryout");
+	page.addRangeSetting("NumRandomTalentsVisiblePostTryout", 1, 0, 8, 1, "Random Talents Visible After Tryout", "Does nothing if 'Attribute Information After Tryout' is not set to Random, otherwise determines the number of random talents which will be shown after tryout");
+
+	page.addBooleanSetting("Dismiss", true, "Add Dismiss Button", "Adds a dismiss button to throw a brother out of the hiring roster after you've tried them out")
+	page.addRangeSetting("TryoutCostMult", 1.0, 0.0, 10.0, 0.1, "Tryout Cost Multiplier", "Sets the multiplier to use for the tryout price");
+	if (::Hooks.hasMod("mod_legends"))
+		page.addBooleanSetting("ShowPerkGroups", true, "Show Perk Groups", "Shows perk groups (currently only for legends) before tryout")
+	page.addBooleanSetting("Dismiss", true, "Add Dismiss Button", "Adds a dismiss button to throw a brother out of the hiring roster after you've tried them out")
 
 	::include("clever_recruiter/town_hire_dialog_module");
-	::include("clever_recruiter/world_state");
+	::include("clever_recruiter/player");
 	::include("clever_recruiter/data_helper");
-})
+});
+
+::CleverRecruiter.HookMod.queue(">mod_msu", ">mod_legends", ">mod_legends_PTR", function() {
+	::World.createRoster(::CleverRecruiter.ID);
+	local tempPlayer = ::World.getRoster(::CleverRecruiter.ID).create("scripts/entity/tactical/player");
+	local tempBackground = ::new("scripts/skills/backgrounds/character_background");
+	tempPlayer.getSkills().add(tempBackground);
+	tempPlayer.setHitpoints = function( _hitpoints ) {}
+	local rand = ::Math.rand;
+	::Math.rand = @(_a, _b) _b;
+	tempBackground.buildAttributes();
+	::Math.rand = rand;
+	::CleverRecruiter.BaseAttributes = ::MSU.Class.OrderedMap();
+	::CleverRecruiter.BaseAttributes.Hitpoints <- tempPlayer.getBaseProperties().Hitpoints,
+	::CleverRecruiter.BaseAttributes.MeleeSkill <- tempPlayer.getBaseProperties().MeleeSkill,
+	::CleverRecruiter.BaseAttributes.Stamina <- tempPlayer.getBaseProperties().Stamina,
+	::CleverRecruiter.BaseAttributes.RangedSkill <- tempPlayer.getBaseProperties().RangedSkill,
+	::CleverRecruiter.BaseAttributes.Bravery <- tempPlayer.getBaseProperties().Bravery,
+	::CleverRecruiter.BaseAttributes.MeleeDefense <- tempPlayer.getBaseProperties().MeleeDefense,
+	::CleverRecruiter.BaseAttributes.Initiative <- tempPlayer.getBaseProperties().Initiative
+	::CleverRecruiter.BaseAttributes.RangedDefense <- tempPlayer.getBaseProperties().RangedDefense,
+	::World.deleteRoster(::CleverRecruiter.ID);
+}, ::Hooks.QueueBucket.FirstWorldInit);

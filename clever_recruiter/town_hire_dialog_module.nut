@@ -1,6 +1,6 @@
 ::CleverRecruiter.HookMod.hook("scripts/ui/screens/world/modules/world_town_screen/town_hire_dialog_module", function(q)
 {
-	q.CleverRecruiter_onPaidDismissRosterEntity <- function( _entityID )
+	q.CleverRecruiter_onDismissRosterEntity <- function( _entityID )
 	{
 		local entity = this.findEntityWithinRoster(_entityID)
 
@@ -11,17 +11,7 @@
 				Assets = null
 			};
 		}
-
-		local tryoutCost = entity.getTryoutCost();
-		if (tryoutCost > ::World.Assets.getMoney())
-		{
-			return {
-				Result = ::Const.UI.Error.NotEnoughMoney,
-				Assets = null
-			};
-		}
 		::World.getRoster(this.m.RosterID).remove(entity);
-		if (::CleverRecruiter.Mod.ModSettings.getSetting("Mode").getValue() == "Standard") ::World.Assets.addMoney(-tryoutCost);
 
 		if (this.World.getRoster(this.m.RosterID).getSize() == 0)
 		{
@@ -37,13 +27,8 @@
 
 	q.onHireRosterEntry = @(__original) function( _entityID )
 	{
-		local entity = this.findEntity__originalWithinRoster(_entityID);
-
-		if (entity != null && entity.getFlags().has("CleverRecruiter_RandAttribute"))
-		{
-			entity.getFlags().remove("CleverRecruiter_RandAttribute")
-			entity.getFlags().remove("CleverRecruiter_RandTalent")
-		}
+		local entity = this.findEntityWithinRoster(_entityID);
+		entity.CleverRecruiter_clearRandoms();
 		return __original(_entityID);
 	}
 });

@@ -11,17 +11,10 @@ WorldTownScreenHireDialogModule.prototype.createDIV = function (_parentDiv)
 	var self = this;
 	this.mDetailsPanel.TryoutButton.bindFirst('click', function(_event)
 	{
-		switch(MSU.getSettingValue(CleverRecruiter.ID, "Mode"))
-		{
-			case "Alternate":
-			case "Talents":
-			case "Lite":
-			case "Liter":
-				if (!MSU.getSettingValue(CleverRecruiter.ID, CleverRecruiter.ShowDismiss) || !self.mSelectedEntry.data('entry')["IsTryoutDone"]) break;
-			case "Standard":
-				_event.stopImmediatePropagation();
-				self.CleverRecruiter_dimissSelectedEntry();
-		}
+		if (!MSU.getSettingValue(CleverRecruiter.ID, "Dismiss") || !self.mSelectedEntry.data('entry').IsTryoutDone)
+			return;
+		_event.stopImmediatePropagation();
+		self.CleverRecruiter_dimissSelectedEntry();
 	});
 
 	this.mCleverRecruiter = {
@@ -89,74 +82,50 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 	if (_element === null || _element.length == 0) return;
 	var data = _element.data('entry');
 
-	var mode = MSU.getSettingValue(CleverRecruiter.ID, "Mode");
-
-	if (mode == "Standard")
+	if (data.IsTryoutDone)
 	{
-		var icon = this.mDetailsPanel.CharacterTraitsContainer.find('[src="' + Path.GFX + Asset.ICON_UNKNOWN_TRAITS + '"]:first')
-		icon.unbindTooltip();
-		icon.remove();
-
-		this.mDetailsPanel.TryoutButton.findButtonText().html("Dismiss");
-		this.mDetailsPanel.TryoutButton.addClass('display-block').removeClass('display-none');
-	}
-	else
-	{
-		if (MSU.getSettingValue(CleverRecruiter.ID, CleverRecruiter.ShowDismiss) && data['IsTryoutDone'])
+		if (MSU.getSettingValue(CleverRecruiter.ID, "Dismiss"))
 		{
 			this.mDetailsPanel.TryoutButton.addClass('display-block').removeClass('display-none');
 			this.mDetailsPanel.TryoutButton.findButtonText().html("Dismiss");
+			this.mDetailsPanel.TryoutButton.enableButton(true);
 		}
 		else
 		{
 			this.mDetailsPanel.TryoutButton.findButtonText().html("Try out");
 		}
 	}
-
-	if (mode == "Standard" || mode == "Alternate" && !data['IsTryoutDone'])
+	else
 	{
-		for(var i = 0; i < data.Traits.length; ++i)
+		if (MSU.getSettingValue(CleverRecruiter.ID, "TraitInfo") == "All")
 		{
-			var icon = $('<img src="' + Path.GFX + data.Traits[i].icon + '"/>');
-			icon.bindTooltip({ contentType: 'status-effect', entityId: data.ID, statusEffectId: data.Traits[i].id });
-			this.mDetailsPanel.CharacterTraitsContainer.append(icon);
+			var icon = this.mDetailsPanel.CharacterTraitsContainer.find('[src="' + Path.GFX + Asset.ICON_UNKNOWN_TRAITS + '"]').filter(':first')
+			icon.unbindTooltip();
+			icon.remove();
+		}
+		if (data.CleverRecruiter_IsLegends && MSU.getSettingValue(CleverRecruiter.ID, "ShowPerkGroups"))
+		{
+			var perkTreesImg = this.mDetailsPanel.CharacterTraitsContainer.find('img[src="' + Path.GFX + 'ui/icons/unknown_perks.png"]').filter(':first');
+			perkTreesImg.attr('src', Path.GFX + 'ui/icons/known_perks.png');
+			perkTreesImg.unbindTooltip();
+			perkTreesImg.bindTooltip({ contentType: 'ui-element', elementId: TooltipIdentifier.WorldTownScreen.HireDialogModule.KnownPerks, entityId: data.ID });
 		}
 	}
 
-	var value;
-	var talent;
-
-	for (var i = 0; i < this.mCleverRecruiter.Properties.length; i++)
+	for (var i = 0; i < data.CleverRecruiter.Traits.length; ++i)
 	{
-		if (mode == "Standard" || mode == "Alternate" || data['IsTryoutDone'] && mode == "Lite" || (mode == "Liter" && data['IsTryoutDone'] && data.RandAttribute == i))
-		{
-			value = data.Properties[this.mCleverRecruiter.Properties[i].ID][0]
-		}
-		else
-		{
-			value = "?"
-		}
-
-		if (mode == "Standard" || (data['IsTryoutDone'] && (mode == "Alternate" || mode == "Lite" || mode == "Talents" || (mode == "Liter" && data.RandTalent == i))))
-		{
-			talent = data.Properties[this.mCleverRecruiter.Properties[i].ID][2]
-		}
-		else
-		{
-			talent = 0;
-		}
-
-		this.mCleverRecruiter.Properties[i].Text.html(value + '/' + data.Properties[this.mCleverRecruiter.Properties[i].ID][1]);
-		this.mCleverRecruiter.Properties[i].Talents.attr('src', Path.GFX + 'ui/icons/talent_' + talent + '.png')
+		var icon = $('<img src="' + Path.GFX + data.CleverRecruiter.Traits[i].icon + '"/>');
+		icon.bindTooltip({ contentType: 'status-effect', entityId: data.ID, statusEffectId: data.CleverRecruiter.Traits[i].id });
+		this.mDetailsPanel.CharacterTraitsContainer.append(icon);
 	}
 
-	if (!data['IsTryoutDone'] && data.CleverRecruiter_IsLegends && mode == "Standard")
+	for (var i = 0; i < data.CleverRecruiter.Attributes.length; ++i)
 	{
-		var perkTreesImg = this.mDetailsPanel.CharacterTraitsContainer.find('img[src="' + Path.GFX + 'ui/icons/unknown_perks.png"]:first');
-		perkTreesImg.attr('src', Path.GFX + 'ui/icons/known_perks.png');
-		perkTreesImg.unbindTooltip();
-		perkTreesImg.bindTooltip({ contentType: 'ui-element', elementId: TooltipIdentifier.WorldTownScreen.HireDialogModule.KnownPerks, entityId: data.ID });
+		var values = data.CleverRecruiter.Attributes[i]
+		this.mCleverRecruiter.Properties[i].Text.html((values[0] == null ? '??' : values[0]) + '/' + values[1]);
+		this.mCleverRecruiter.Properties[i].Talents.attr('src', Path.GFX + 'ui/icons/talent_' + values[2] + '.png')
 	}
+
 }
 
 CleverRecruiter.WorldTownScreenHireDialogModule_updateListEntryValues = WorldTownScreenHireDialogModule.prototype.updateListEntryValues;
@@ -169,23 +138,25 @@ WorldTownScreenHireDialogModule.prototype.updateListEntryValues = function()
 		var entry = $(element);
 		var traitsContainer = entry.find('.is-traits-container');
 		var data = entry.data('entry');
-		if (MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard")
+
+		if (data.IsTryoutDone)
+			return;
+
+		if (MSU.getSettingValue(CleverRecruiter.ID, "TraitInfo") == "All")
 		{
-			var icon = traitsContainer.find('[src="' + Path.GFX + Asset.ICON_UNKNOWN_TRAITS + '"]:first')
+			var icon = traitsContainer.find('[src="' + Path.GFX + Asset.ICON_UNKNOWN_TRAITS + '"]').filter(':first')
 			icon.unbindTooltip();
 			icon.remove();
 		}
-		if (MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard" || MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Alternate" && !data['IsTryoutDone'])
+
+		for (var i = 0; i < data.CleverRecruiter.Traits.length; ++i)
 		{
-			for(var i = 0; i < data.Traits.length; ++i)
-			{
-				var icon = $('<img src="' + Path.GFX + data.Traits[i].icon + '"/>');
-				icon.bindTooltip({ contentType: 'status-effect', entityId: data.ID, statusEffectId: data.Traits[i].id });
-				traitsContainer.append(icon);
-			}
+			var icon = $('<img src="' + Path.GFX + data.CleverRecruiter.Traits[i].icon + '"/>');
+			icon.bindTooltip({ contentType: 'status-effect', entityId: data.ID, statusEffectId: data.CleverRecruiter.Traits[i].id });
+			traitsContainer.append(icon);
 		}
 
-		if (!data['IsTryoutDone'] && data.CleverRecruiter_IsLegends && MSU.getSettingValue(CleverRecruiter.ID, "Mode") == "Standard" )
+		if (data.CleverRecruiter.Legends && MSU.getSettingValue(CleverRecruiter.ID, "ShowPerkGroups"))
 		{
 			var perkTreesImg = traitsContainer.find('img[src="' + Path.GFX + 'ui/icons/unknown_perks.png"]:first');
 			perkTreesImg.attr('src', Path.GFX + 'ui/icons/known_perks.png');
@@ -203,12 +174,11 @@ WorldTownScreenHireDialogModule.prototype.CleverRecruiter_dimissSelectedEntry = 
 		var data = this.mSelectedEntry.data('entry');
 		if ('ID' in data && data['ID'] !== null)
 		{
-			this.CleverRecruiter_notifyBackendPaidDismissRosterEntity(data['ID'], function (_data)
+			this.CleverRecruiter_notifyBackendDismissRosterEntity(data['ID'], function (_data)
 			{
 				if (_data.Result != 0)
 				{
-					if (_data.Result == ErrorCode.NotEnoughMoney) self.mAssets.mMoneyAsset.shakeLeftRight();
-					else console.error("Failed to hire. Reason: Unknown");
+					console.error("Failed to hire. Reason: Unknown");
 					return;
 				}
 
@@ -229,7 +199,7 @@ WorldTownScreenHireDialogModule.prototype.CleverRecruiter_dimissSelectedEntry = 
 	}
 }
 
-WorldTownScreenHireDialogModule.prototype.CleverRecruiter_notifyBackendPaidDismissRosterEntity = function(_entityID, _callback)
+WorldTownScreenHireDialogModule.prototype.CleverRecruiter_notifyBackendDismissRosterEntity = function(_entityID, _callback)
 {
-	SQ.call(this.mSQHandle, "CleverRecruiter_onPaidDismissRosterEntity", _entityID, _callback);
+	SQ.call(this.mSQHandle, "CleverRecruiter_onDismissRosterEntity", _entityID, _callback);
 }
