@@ -15,8 +15,6 @@
 	q.onSerialize = @(__original) function( _out ) {
 		::CleverRecruiter.Mod.Serialization.flagSerialize("RandTalents", this.m.CleverRecruiter_RandTalents, this.getFlags());
 		::CleverRecruiter.Mod.Serialization.flagSerialize("RandAttributes", this.m.CleverRecruiter_RandAttributes, this.getFlags());
-		::logInfo(this.getName());
-		::MSU.Log.printData(this.getFlags().m)
 		__original(_out);
 	}
 
@@ -24,9 +22,6 @@
 		__original(_in);
 		if (::CleverRecruiter.Mod.Serialization.isSavedVersionAtLeast("2.0.0-alpha.1", _in.getMetaData()))
 		{
-			::logInfo("Saved version passed");
-			::logInfo(this.getName());
-			::MSU.Log.printData(this.getFlags().m)
 			this.m.CleverRecruiter_RandTalents = ::CleverRecruiter.Mod.Serialization.flagDeserialize("RandTalents", [], null, this.getFlags())
 			this.m.CleverRecruiter_RandAttributes = ::CleverRecruiter.Mod.Serialization.flagDeserialize("RandAttributes", [], null,	 this.getFlags())
 		}

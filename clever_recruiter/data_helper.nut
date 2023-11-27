@@ -66,10 +66,8 @@
 
 			if (dataToShow.Attributes == "Random")
 			{
-				::MSU.Log.printData(_entity.CleverRecruiter_getRandAttributes())
 				if (!_entity.CleverRecruiter_hasRolled())
 					_entity.CleverRecruiter_rollRandoms();
-				::MSU.Log.printData(_entity.CleverRecruiter_getRandAttributes())
 
 				local numAttributesToShow = _entity.isTryoutDone() ? getMySettingValue("NumRandomStatsVisiblePostTryout") : getMySettingValue("NumRandomStatsVisiblePreTryout");
 				local numTalentsToShow = _entity.isTryoutDone() ? getMySettingValue("NumRandomTalentsVisiblePostTryout") : getMySettingValue("NumRandomTalentsVisiblePreTryout");
