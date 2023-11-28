@@ -60,27 +60,6 @@
 
 	::include("clever_recruiter/town_hire_dialog_module");
 	::include("clever_recruiter/player");
+	::include("clever_recruiter/world_state");
 	::include("clever_recruiter/data_helper");
 });
-
-::CleverRecruiter.HookMod.queue(">mod_msu", ">mod_legends", ">mod_legends_PTR", function() {
-	::World.createRoster(::CleverRecruiter.ID);
-	local tempPlayer = ::World.getRoster(::CleverRecruiter.ID).create("scripts/entity/tactical/player");
-	local tempBackground = ::new("scripts/skills/backgrounds/character_background");
-	tempPlayer.getSkills().add(tempBackground);
-	tempPlayer.setHitpoints = function( _hitpoints ) {}
-	local rand = ::Math.rand;
-	::Math.rand = @(_a, _b) _b;
-	tempBackground.buildAttributes();
-	::Math.rand = rand;
-	::CleverRecruiter.BaseAttributes = ::MSU.Class.OrderedMap();
-	::CleverRecruiter.BaseAttributes.Hitpoints <- tempPlayer.getBaseProperties().Hitpoints,
-	::CleverRecruiter.BaseAttributes.MeleeSkill <- tempPlayer.getBaseProperties().MeleeSkill,
-	::CleverRecruiter.BaseAttributes.Stamina <- tempPlayer.getBaseProperties().Stamina,
-	::CleverRecruiter.BaseAttributes.RangedSkill <- tempPlayer.getBaseProperties().RangedSkill,
-	::CleverRecruiter.BaseAttributes.Bravery <- tempPlayer.getBaseProperties().Bravery,
-	::CleverRecruiter.BaseAttributes.MeleeDefense <- tempPlayer.getBaseProperties().MeleeDefense,
-	::CleverRecruiter.BaseAttributes.Initiative <- tempPlayer.getBaseProperties().Initiative
-	::CleverRecruiter.BaseAttributes.RangedDefense <- tempPlayer.getBaseProperties().RangedDefense,
-	::World.deleteRoster(::CleverRecruiter.ID);
-}, ::Hooks.QueueBucket.FirstWorldInit);
