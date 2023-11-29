@@ -4,8 +4,8 @@
 
 	q.create = @(__original) function() {
 		__original();
-		q.m.CleverRecruiter_RandAttributes = [];
-		q.m.CleverRecruiter_RandTalents = [];
+		this.m.CleverRecruiter_RandAttributes = [];
+		this.m.CleverRecruiter_RandTalents = [];
 	}
 
 	q.getTryoutCost = @(__original) function() {
