@@ -55,4 +55,25 @@
 	{
 		return this.m.CleverRecruiter_RandAttributes;
 	}
+
+	q.CleverRecruiter_getMaxLvlPotentials <- function()
+	{
+		local attributes = ::array(::Const.Attributes.COUNT);
+		local numLevelUpsLeft = ::Const.XP.MaxLevelWithPerkpoints - this.m.LevelUpsSpent;
+		local attributeKeys = ::CleverRecruiter.BaseAttributes.keys();
+		local properties = this.getBaseProperties();
+		for (local i = 0; i < attributes.len(); ++i)
+		{
+			local id = attributeKeys[i];
+			local talent = this.m.Talents[::Const.Attributes[id == "Stamina" ? "Fatigue" : id]];
+			local min = ::Const.AttributesLevelUp[i].Min + (talent == 3 ? 2 : talent);
+			local max = ::Const.AttributesLevelUp[i].Max + (talent == 3 ? 1 : 0);
+			attributes[i] = {
+				Min = min * numLevelUpsLeft + properties[id],
+				Max = max * numLevelUpsLeft + properties[id],
+				Mean = ::Math.round((min + max) / 2.0 * numLevelUpsLeft) + properties[id]
+			};
+		}
+		return attributes;
+	}
 })

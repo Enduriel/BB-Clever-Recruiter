@@ -124,8 +124,13 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 	for (var i = 0; i < data.CleverRecruiter.Attributes.length; ++i)
 	{
 		var values = data.CleverRecruiter.Attributes[i]
-		this.mCleverRecruiter.Properties[i].Text.html((values[0] == null ? '??' : values[0]) + '/' + values[1]);
+		var text = (values[0] == null ? '??' : values[0]) + '/' + values[1];
 		this.mCleverRecruiter.Properties[i].Talents.attr('src', Path.GFX + 'ui/icons/talent_' + values[2] + '.png')
+		if (values[3] != null) // level 11 projections
+		{
+			text += '→' + (values[3].Min == values[3].Max ? values[3].Mean : '~' + values[3].Mean);
+		}
+		this.mCleverRecruiter.Properties[i].Text.text(text);
 	}
 
 }
