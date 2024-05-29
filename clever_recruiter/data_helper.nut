@@ -19,7 +19,7 @@
 		local traits;
 		if (dataToShow.Traits == "All")
 		{
-			traits = _entity.getSkills().getSkillsByFunction(@(_skill) _skill.getType() == ::Const.SkillType.Trait);
+			traits = _entity.getSkills().getSkillsByFunction(@(_skill) _skill.getType() == ::Const.SkillType.Trait && !_skill.isHidden());
 		}
 		else if (dataToShow.Traits == "Alternate")
 		{
