@@ -55,7 +55,6 @@ WorldTownScreenHireDialogModule.prototype.createDIV = function (_parentDiv)
 		]
 	}
 	var row;
-	var container;
 	for (var i = 0; i < this.mCleverRecruiter.Properties.length; i++)
 	{
 		if (i % 2 == 0)
@@ -63,13 +62,15 @@ WorldTownScreenHireDialogModule.prototype.createDIV = function (_parentDiv)
 			row = $('<div class="stat-row"/>');
 			this.mCleverRecruiter.Grid.append(row);
 		}
-		container = $('<div class="stat-container"/>');
+		var container = $('<div class="stat-container"/>');
 		row.append(container)
-		container.append($('<img class="stat-icon" src="' + Path.GFX + this.mCleverRecruiter.Properties[i].IconAsset + '"/>'));
+		var iconStarsColumn = $('<div class="icon-stars-column"/>');
+		container.append(iconStarsColumn);
+		iconStarsColumn.append($('<img class="stat-icon" src="' + Path.GFX + this.mCleverRecruiter.Properties[i].IconAsset + '"/>'));
+		this.mCleverRecruiter.Properties[i].Talents = $('<img class="talent" src="' + Path.GFX + 'ui/icons/talent_0.png"/>');
+		iconStarsColumn.append(this.mCleverRecruiter.Properties[i].Talents);
 		this.mCleverRecruiter.Properties[i].Text = $('<div class="stat-text"/>');
 		container.append(this.mCleverRecruiter.Properties[i].Text);
-		this.mCleverRecruiter.Properties[i].Talents = $('<img class="talent" src="' + Path.GFX + 'ui/icons/talent_0.png"/>');
-		container.append(this.mCleverRecruiter.Properties[i].Talents)
 	}
 
 	this.mDetailsPanel.CharacterBackgroundTextScrollContainer.before(this.mCleverRecruiter.Grid);
