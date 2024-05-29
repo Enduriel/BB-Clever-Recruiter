@@ -9,7 +9,7 @@
 	}
 
 	q.getTryoutCost = @(__original) function() {
-		return __original() * ::CleverRecruiter.Mod.ModSettings.getSetting("TryoutCostMult").getValue();
+		return ::Math.round(__original() * ::CleverRecruiter.Mod.ModSettings.getSetting("TryoutCostMult").getValue());
 	}
 
 	q.onSerialize = @(__original) function( _out ) {
