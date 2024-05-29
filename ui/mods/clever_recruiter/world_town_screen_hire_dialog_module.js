@@ -88,17 +88,17 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 		if (MSU.getSettingValue(CleverRecruiter.ID, "Dismiss"))
 		{
 			this.mDetailsPanel.TryoutButton.addClass('display-block').removeClass('display-none');
-			this.mDetailsPanel.TryoutButton.findButtonText().html("Dismiss");
+			this.mDetailsPanel.TryoutButton.findButtonText().text("Dismiss");
 			this.mDetailsPanel.TryoutButton.enableButton(true);
 		}
 		else
 		{
-			this.mDetailsPanel.TryoutButton.findButtonText().html("Try out");
+			this.mDetailsPanel.TryoutButton.findButtonText().text("Try out");
 		}
 	}
 	else
 	{
-		this.mDetailsPanel.TryoutButton.findButtonText().html("Try out");
+		this.mDetailsPanel.TryoutButton.findButtonText().text("Try out");
 		if (MSU.getSettingValue(CleverRecruiter.ID, "TraitInfo") == "All")
 		{
 			var icon = this.mDetailsPanel.CharacterTraitsContainer.find('[src="' + Path.GFX + Asset.ICON_UNKNOWN_TRAITS + '"]').filter(':first')
