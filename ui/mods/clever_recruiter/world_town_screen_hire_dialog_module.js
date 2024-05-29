@@ -97,6 +97,7 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 	}
 	else
 	{
+		this.mDetailsPanel.TryoutButton.findButtonText().html("Try out");
 		if (MSU.getSettingValue(CleverRecruiter.ID, "TraitInfo") == "All")
 		{
 			var icon = this.mDetailsPanel.CharacterTraitsContainer.find('[src="' + Path.GFX + Asset.ICON_UNKNOWN_TRAITS + '"]').filter(':first')
