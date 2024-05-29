@@ -1,7 +1,7 @@
 ::CleverRecruiter <- {
 	ID = "mod_clever_recruiter",
 	Name = "Clever Recruiter",
-	Version = "2.1.1",
+	Version = "2.1.2",
 	BaseAttributes = null,
 	AlternateTraits = [
 		"trait.asthmatic",
