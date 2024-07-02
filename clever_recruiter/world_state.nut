@@ -7,7 +7,13 @@
 		tempPlayer.getSkills().add(tempBackground);
 		tempPlayer.setHitpoints = function( _hitpoints ) {}
 		local rand = ::Math.rand;
-		::Math.rand = @(_a, _b) _b;
+		local nan = "NOT_A_NUMBER";
+		::Math.rand = function(_a = nan, _b = nan) {
+			if (_b != nan) {
+				return _b;
+			}
+			return rand();
+		};
 		tempBackground.buildAttributes();
 		::Math.rand = rand;
 		::CleverRecruiter.BaseAttributes = ::MSU.Class.OrderedMap();
