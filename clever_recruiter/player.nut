@@ -59,19 +59,24 @@
 	q.CleverRecruiter_getMaxLvlPotentials <- function()
 	{
 		local attributes = ::array(::Const.Attributes.COUNT);
-		local numLevelUpsLeft = ::Const.XP.MaxLevelWithPerkpoints - this.m.LevelUpsSpent;
+		local oldAttributes = this.m.Attributes;
+		local minAttributes = [];
+		this.m.Attributes = minAttributes;
+		this.fillAttributeLevelUpValues(::Const.XP.MaxLevelWithPerkpoints - 1 - this.m.LevelUpsSpent, false, true);
+		local maxAttributes = [];
+		this.m.Attributes = maxAttributes;
+		this.fillAttributeLevelUpValues(::Const.XP.MaxLevelWithPerkpoints - 1 - this.m.LevelUpsSpent, true);
+		this.m.Attributes = oldAttributes;
 		local attributeKeys = ::CleverRecruiter.BaseAttributes.keys();
 		local properties = this.getBaseProperties();
-		for (local i = 0; i < attributes.len(); ++i)
-		{
+		for (local i = 0; i < attributes.len(); ++i) {
 			local id = attributeKeys[i];
-			local talent = this.m.Talents[::Const.Attributes[id == "Stamina" ? "Fatigue" : id]];
-			local min = ::Const.AttributesLevelUp[i].Min + (talent == 3 ? 2 : talent);
-			local max = ::Const.AttributesLevelUp[i].Max + (talent == 3 ? 1 : 0);
+			local minAttributesSum = minAttributes[i].reduce(@(_a, _b) _a + _b);
+			local maxAttributesSum = maxAttributes[i].reduce(@(_a, _b) _a + _b);
 			attributes[i] = {
-				Min = min * numLevelUpsLeft + properties[id],
-				Max = max * numLevelUpsLeft + properties[id],
-				Mean = ::Math.round((min + max) / 2.0 * numLevelUpsLeft) + properties[id]
+				Min = minAttributesSum + properties[id],
+				Max = maxAttributesSum + properties[id],
+				Mean = ::Math.round((minAttributesSum + maxAttributesSum) / 2.0) + properties[id]
 			};
 		}
 		return attributes;
