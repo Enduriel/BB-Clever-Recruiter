@@ -6,24 +6,17 @@
 		local tempBackground = ::new("scripts/skills/backgrounds/character_background");
 		tempPlayer.getSkills().add(tempBackground);
 		tempPlayer.setHitpoints = function( _hitpoints ) {}
-		local rand = ::Math.rand;
-		local nan = "NOT_A_NUMBER";
-		::Math.rand = function(_a = nan, _b = nan) {
-			if (_b != nan) {
-				return _b;
-			}
-			return rand();
-		};
+		::CleverRecruiter.switcherooRandMax();
 		tempBackground.buildAttributes();
-		::Math.rand = rand;
+		::CleverRecruiter.unswitcherooRand();
 		::CleverRecruiter.BaseAttributes = ::MSU.Class.OrderedMap();
 		::CleverRecruiter.BaseAttributes.Hitpoints <- tempPlayer.getBaseProperties().Hitpoints,
-		::CleverRecruiter.BaseAttributes.MeleeSkill <- tempPlayer.getBaseProperties().MeleeSkill,
-		::CleverRecruiter.BaseAttributes.Stamina <- tempPlayer.getBaseProperties().Stamina,
-		::CleverRecruiter.BaseAttributes.RangedSkill <- tempPlayer.getBaseProperties().RangedSkill,
 		::CleverRecruiter.BaseAttributes.Bravery <- tempPlayer.getBaseProperties().Bravery,
-		::CleverRecruiter.BaseAttributes.MeleeDefense <- tempPlayer.getBaseProperties().MeleeDefense,
-		::CleverRecruiter.BaseAttributes.Initiative <- tempPlayer.getBaseProperties().Initiative
+		::CleverRecruiter.BaseAttributes.Stamina <- tempPlayer.getBaseProperties().Stamina,
+		::CleverRecruiter.BaseAttributes.Initiative <- tempPlayer.getBaseProperties().Initiative,
+		::CleverRecruiter.BaseAttributes.MeleeSkill <- tempPlayer.getBaseProperties().MeleeSkill,
+		::CleverRecruiter.BaseAttributes.RangedSkill <- tempPlayer.getBaseProperties().RangedSkill,
+		::CleverRecruiter.BaseAttributes.MeleeDefense <- tempPlayer.getBaseProperties().MeleeDefense
 		::CleverRecruiter.BaseAttributes.RangedDefense <- tempPlayer.getBaseProperties().RangedDefense,
 		::World.deleteRoster(::CleverRecruiter.ID);
 	}

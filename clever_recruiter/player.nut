@@ -62,10 +62,14 @@
 		local oldAttributes = this.m.Attributes;
 		local minAttributes = [];
 		this.m.Attributes = minAttributes;
-		this.fillAttributeLevelUpValues(::Const.XP.MaxLevelWithPerkpoints - 1 - this.m.LevelUpsSpent, false, true);
+		::CleverRecruiter.switcherooRandMin();
+		this.fillAttributeLevelUpValues(::Const.XP.MaxLevelWithPerkpoints - 1 - this.m.LevelUpsSpent);
+		::CleverRecruiter.unswitcherooRand();
 		local maxAttributes = [];
 		this.m.Attributes = maxAttributes;
-		this.fillAttributeLevelUpValues(::Const.XP.MaxLevelWithPerkpoints - 1 - this.m.LevelUpsSpent, true);
+		::CleverRecruiter.switcherooRandMax();
+		this.fillAttributeLevelUpValues(::Const.XP.MaxLevelWithPerkpoints - 1 - this.m.LevelUpsSpent);
+		::CleverRecruiter.unswitcherooRand();
 		this.m.Attributes = oldAttributes;
 		local attributeKeys = ::CleverRecruiter.BaseAttributes.keys();
 		local properties = this.getBaseProperties();
@@ -79,6 +83,16 @@
 				Mean = ::Math.round((minAttributesSum + maxAttributesSum) / 2.0) + properties[id]
 			};
 		}
+		local unMovedAttributes = ::array(attributes.len());
+		for (local i = 0; i < attributes.len(); ++i) {
+			unMovedAttributes[i] = {
+				Min = attributes[i].Min - properties[attributeKeys[i]],
+				Max = attributes[i].Max - properties[attributeKeys[i]],
+				Mean = attributes[i].Mean - properties[attributeKeys[i]]
+			}
+		}
+		::MSU.Log.printData(attributes, 2, false, 100);
+		::MSU.Log.printData(unMovedAttributes, 2, false, 100);
 		return attributes;
 	}
 })

@@ -23,7 +23,9 @@
 		"trait.strong",
 		"trait.swift",
 		"trait.tiny"
-	]
+	],
+	Nan = "NOT_A_NUMBER",
+	RealRand = null
 }
 
 ::CleverRecruiter.HookMod <- ::Hooks.register(::CleverRecruiter.ID, ::CleverRecruiter.Version, ::CleverRecruiter.Name);
@@ -32,6 +34,32 @@
 ::CleverRecruiter.HookMod.conflictWith("mod_smart_recruiter", "mod_smart_recruiter_legends");
 
 ::CleverRecruiter.HookMod.queue(">mod_msu", ">mod_legends", ">mod_legends_PTR", function() {
+	::CleverRecruiter.switcherooRandMax <- function() {
+		::CleverRecruiter.RealRand = ::Math.rand;
+		::Math.rand = function(_a = ::CleverRecruiter.Nan, _b = ::CleverRecruiter.Nan) {
+			if (_b != ::CleverRecruiter.Nan) {
+				return _b;
+			}
+			return ::CleverRecruiter.RealRand();
+		};
+	}
+
+	::CleverRecruiter.switcherooRandMin <- function() {
+		::CleverRecruiter.RealRand = ::Math.rand;
+		::Math.rand = function(_a = ::CleverRecruiter.Nan, _b = ::CleverRecruiter.Nan) {
+			if (_a != ::CleverRecruiter.Nan) {
+				return _a;
+			}
+			return ::CleverRecruiter.RealRand();
+		};
+	}
+
+	::CleverRecruiter.unswitcherooRand <- function() {
+		::Math.rand = ::CleverRecruiter.RealRand;
+		::CleverRecruiter.RealRand = null;
+	}
+
+
 	::Hooks.registerJS("ui/mods/clever_recruiter/world_town_screen_hire_dialog_module.js");
 	::Hooks.registerCSS("ui/mods/clever_recruiter/css/world_town_screen_hire_dialog_module.css");
 

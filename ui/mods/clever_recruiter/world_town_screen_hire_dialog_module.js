@@ -25,28 +25,28 @@ WorldTownScreenHireDialogModule.prototype.createDIV = function (_parentDiv)
 				IconAsset : Asset.ICON_HEALTH
 			},
 			{
-				ID : "MeleeSkill",
-				IconAsset : Asset.ICON_MELEE_SKILL
+				ID : "Bravery",
+				IconAsset : Asset.ICON_BRAVERY
 			},
 			{
 				ID : "Stamina",
 				IconAsset : Asset.ICON_FATIGUE
 			},
 			{
+				ID : "Initiative",
+				IconAsset : Asset.ICON_INITIATIVE
+			},
+			{
+				ID : "MeleeSkill",
+				IconAsset : Asset.ICON_MELEE_SKILL
+			},
+			{
 				ID : "RangedSkill",
 				IconAsset : Asset.ICON_RANGE_SKILL
 			},
 			{
-				ID : "Bravery",
-				IconAsset : Asset.ICON_BRAVERY
-			},
-			{
 				ID : "MeleeDefense",
 				IconAsset : Asset.ICON_MELEE_DEFENCE
-			},
-			{
-				ID : "Initiative",
-				IconAsset : Asset.ICON_INITIATIVE
 			},
 			{
 				ID : "RangedDefense",
