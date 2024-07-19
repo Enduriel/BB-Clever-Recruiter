@@ -93,8 +93,6 @@
 				Mean = attributes[i].Mean - properties[attributeKeys[i]]
 			}
 		}
-		::MSU.Log.printData(attributes, 2, false, 100);
-		::MSU.Log.printData(unMovedAttributes, 2, false, 100);
 		this.m.Talents = oldTalents;
 		return attributes;
 	}
