@@ -56,8 +56,10 @@
 		return this.m.CleverRecruiter_RandAttributes;
 	}
 
-	q.CleverRecruiter_getMaxLvlPotentials <- function()
+	q.CleverRecruiter_getMaxLvlPotentials <- function(_knownTalents)
 	{
+		local oldTalents = this.m.Talents;
+		this.m.Talents = _knownTalents;
 		local attributes = ::array(::Const.Attributes.COUNT);
 		local oldAttributes = this.m.Attributes;
 		local minAttributes = [];
@@ -93,6 +95,7 @@
 		}
 		::MSU.Log.printData(attributes, 2, false, 100);
 		::MSU.Log.printData(unMovedAttributes, 2, false, 100);
+		this.m.Talents = oldTalents;
 		return attributes;
 	}
 })

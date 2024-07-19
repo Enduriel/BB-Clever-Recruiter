@@ -38,14 +38,13 @@
 		}
 
 		local backgroundAttributes = _entity.getSkills().getAllSkillsOfType(::Const.SkillType.Background)[0].onChangeAttributes();
-		local maxLvlPotentials = ::CleverRecruiter.Mod.ModSettings.getSetting("MaxLvlPotential").getValue() ? _entity.CleverRecruiter_getMaxLvlPotentials() : ::array(8);
 		foreach (ID, property in ::CleverRecruiter.BaseAttributes)
 		{
 			ret.CleverRecruiter.Attributes.push([
 				_entity.getBaseProperties()[ID],
 				backgroundAttributes[ID][1] + property,
 				_entity.getTalents()[::Const.Attributes[ID == "Stamina" ? "Fatigue" : ID]],
-				maxLvlPotentials[ret.CleverRecruiter.Attributes.len()]
+				null
 			]);
 		}
 		if (dataToShow.Attributes == "OnlyNumbers"  || dataToShow.Attributes == "None")
@@ -61,7 +60,6 @@
 			foreach (attributeInfo in ret.CleverRecruiter.Attributes)
 			{
 				attributeInfo[0] = null;
-				attributeInfo[3] = null;
 			}
 		}
 
@@ -92,6 +90,16 @@
 					attributeInfo[2] = 0;
 				else if (attributeInfo[2] != 0)
 					++j;
+			}
+		}
+
+		local talents = ret.CleverRecruiter.Attributes.map(@(_e) _e[2]);
+		local maxLvlPotentials = ::CleverRecruiter.Mod.ModSettings.getSetting("MaxLvlPotential").getValue() ? _entity.CleverRecruiter_getMaxLvlPotentials(talents) : ::array(8);
+
+		foreach (i, attributeInfo in ret.CleverRecruiter.Attributes)
+		{
+			if (attributeInfo[0] != null) {
+				attributeInfo[3] = maxLvlPotentials[i];
 			}
 		}
 
