@@ -93,11 +93,6 @@
 				else if (attributeInfo[2] != 0)
 					++j;
 			}
-
-			foreach (attributeIdx, attributeInfo in attributesWithTalents)
-			{
-				_entity.CleverRecruiter_getRandAttributes()
-			}
 		}
 
 		return ret;
