@@ -102,7 +102,6 @@
 	page.addRangeSetting("TryoutCostMult", 1.0, 0.0, 10.0, 0.1, "Tryout Cost Multiplier", "Sets the multiplier to use for the tryout price");
 	if (::Hooks.hasMod("mod_legends"))
 		page.addBooleanSetting("ShowPerkGroups", true, "Show Perk Groups", "Shows perk groups (currently only for legends) before tryout")
-	page.addBooleanSetting("Dismiss", true, "Add Dismiss Button", "Adds a dismiss button to throw a brother out of the hiring roster after you've tried them out")
 
 	page.addBooleanSetting("MaxLvlPotential", true, "Max Level Potential", "Shows the projected stats of a recruit based on their current level and the max level at which they still get full level up rewards (usually level 11)")
 
