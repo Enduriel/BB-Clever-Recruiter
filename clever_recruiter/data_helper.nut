@@ -53,11 +53,18 @@
 		}
 
 		local backgroundAttributes = _entity.getSkills().getAllSkillsOfType(::Const.SkillType.Background)[0].onChangeAttributes();
+		local maxAttributes = {};
+		foreach (ID, property in ::CleverRecruiter.BaseAttributes)
+		{
+			// recruits from before this was remembered (older saves) fall back to the vanilla ranges
+			local max = _entity.CleverRecruiter_getMaxAttribute(ID);
+			maxAttributes[ID] <- max != null ? max : backgroundAttributes[ID][1] + property;
+		}
 		foreach (ID, property in ::CleverRecruiter.BaseAttributes)
 		{
 			ret.CleverRecruiter.Attributes.push([
 				_entity.getBaseProperties()[ID],
-				backgroundAttributes[ID][1] + property,
+				maxAttributes[ID],
 				_entity.getTalents()[::Const.Attributes[ID == "Stamina" ? "Fatigue" : ID]],
 				null
 			]);

@@ -24,6 +24,7 @@
 		"trait.swift",
 		"trait.tiny"
 	],
+	AttributeIDs = ["Hitpoints", "Bravery", "Stamina", "Initiative", "MeleeSkill", "RangedSkill", "MeleeDefense", "RangedDefense"],
 	Nan = "NOT_A_NUMBER",
 	RealRand = null
 }
@@ -40,7 +41,7 @@
 			if (_b != ::CleverRecruiter.Nan) {
 				return _b;
 			}
-			return ::CleverRecruiter.RealRand();
+			return ::CleverRecruiter.RealRand.call(::Math);
 		};
 	}
 
@@ -50,7 +51,7 @@
 			if (_a != ::CleverRecruiter.Nan) {
 				return _a;
 			}
-			return ::CleverRecruiter.RealRand();
+			return ::CleverRecruiter.RealRand.call(::Math);
 		};
 	}
 
@@ -108,5 +109,6 @@
 	::include("clever_recruiter/town_hire_dialog_module");
 	::include("clever_recruiter/player");
 	::include("clever_recruiter/world_state");
+	::include("clever_recruiter/character_background");
 	::include("clever_recruiter/data_helper");
 });

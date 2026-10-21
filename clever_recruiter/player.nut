@@ -1,11 +1,13 @@
 ::CleverRecruiter.HookMod.hook("scripts/entity/tactical/player", function(q) {
 	q.m.CleverRecruiter_RandAttributes <- null;
 	q.m.CleverRecruiter_RandTalents <- null;
+	q.m.CleverRecruiter_MaxAttributes <- null; // {attribute ID = highest value it could have rolled}, empty if unknown
 
 	q.create = @(__original) function() {
 		__original();
 		this.m.CleverRecruiter_RandAttributes = [];
 		this.m.CleverRecruiter_RandTalents = [];
+		this.m.CleverRecruiter_MaxAttributes = {};
 	}
 
 	q.getTryoutCost = @(__original) function() {
@@ -15,6 +17,7 @@
 	q.onSerialize = @(__original) function( _out ) {
 		::CleverRecruiter.Mod.Serialization.flagSerialize("RandTalents", this.m.CleverRecruiter_RandTalents, this.getFlags());
 		::CleverRecruiter.Mod.Serialization.flagSerialize("RandAttributes", this.m.CleverRecruiter_RandAttributes, this.getFlags());
+		::CleverRecruiter.Mod.Serialization.flagSerialize("MaxAttributes", this.m.CleverRecruiter_MaxAttributes, this.getFlags());
 		__original(_out);
 	}
 
@@ -25,6 +28,7 @@
 			this.m.CleverRecruiter_RandTalents = ::CleverRecruiter.Mod.Serialization.flagDeserialize("RandTalents", [], null, this.getFlags())
 			this.m.CleverRecruiter_RandAttributes = ::CleverRecruiter.Mod.Serialization.flagDeserialize("RandAttributes", [], null,	 this.getFlags())
 		}
+		this.m.CleverRecruiter_MaxAttributes = ::CleverRecruiter.Mod.Serialization.flagDeserialize("MaxAttributes", {}, null, this.getFlags());
 	}
 
 	q.CleverRecruiter_rollRandoms <- function()
@@ -39,6 +43,12 @@
 	{
 		this.m.CleverRecruiter_RandAttributes.clear();
 		this.m.CleverRecruiter_RandTalents.clear();
+		this.m.CleverRecruiter_MaxAttributes.clear();
+	}
+
+	q.CleverRecruiter_getMaxAttribute <- function( _id )
+	{
+		return _id in this.m.CleverRecruiter_MaxAttributes ? this.m.CleverRecruiter_MaxAttributes[_id] : null;
 	}
 
 	q.CleverRecruiter_hasRolled <- function()
