@@ -58,42 +58,45 @@
 
 	q.CleverRecruiter_getMaxLvlPotentials <- function(_knownTalents)
 	{
+		// recruits who already spent all their level ups (e.g. veterans) have none left, so their arrays stay empty
+		local numLevelUps = ::Math.max(0, ::Const.XP.MaxLevelWithPerkpoints - 1 - this.m.LevelUpsSpent);
 		local oldTalents = this.m.Talents;
-		this.m.Talents = _knownTalents;
-		local attributes = ::array(::Const.Attributes.COUNT);
 		local oldAttributes = this.m.Attributes;
 		local minAttributes = [];
-		this.m.Attributes = minAttributes;
-		::CleverRecruiter.switcherooRandMin();
-		this.fillAttributeLevelUpValues(::Const.XP.MaxLevelWithPerkpoints - 1 - this.m.LevelUpsSpent);
-		::CleverRecruiter.unswitcherooRand();
 		local maxAttributes = [];
-		this.m.Attributes = maxAttributes;
-		::CleverRecruiter.switcherooRandMax();
-		this.fillAttributeLevelUpValues(::Const.XP.MaxLevelWithPerkpoints - 1 - this.m.LevelUpsSpent);
-		::CleverRecruiter.unswitcherooRand();
+		this.m.Talents = _knownTalents;
+		try {
+			this.m.Attributes = minAttributes;
+			::CleverRecruiter.callWithRand(::CleverRecruiter.switcherooRandMin, @() this.fillAttributeLevelUpValues(numLevelUps), this);
+			this.m.Attributes = maxAttributes;
+			::CleverRecruiter.callWithRand(::CleverRecruiter.switcherooRandMax, @() this.fillAttributeLevelUpValues(numLevelUps), this);
+		}
+		catch (error) {
+			this.m.Attributes = oldAttributes;
+			this.m.Talents = oldTalents;
+			throw error;
+		}
 		this.m.Attributes = oldAttributes;
-		local attributeKeys = ::CleverRecruiter.BaseAttributes.keys();
+		this.m.Talents = oldTalents;
+
+		local sum = function( _values ) {
+			local ret = 0;
+			foreach (value in _values)
+				ret += value;
+			return ret;
+		}
+		local attributes = [];
 		local properties = this.getBaseProperties();
-		for (local i = 0; i < attributes.len(); ++i) {
-			local id = attributeKeys[i];
-			local minAttributesSum = minAttributes[i].reduce(@(_a, _b) _a + _b);
-			local maxAttributesSum = maxAttributes[i].reduce(@(_a, _b) _a + _b);
-			attributes[i] = {
+		foreach (id, _ in ::CleverRecruiter.BaseAttributes) {
+			local i = ::CleverRecruiter.getAttributeIndex(id);
+			local minAttributesSum = sum(minAttributes[i]);
+			local maxAttributesSum = sum(maxAttributes[i]);
+			attributes.push({
 				Min = minAttributesSum + properties[id],
 				Max = maxAttributesSum + properties[id],
 				Mean = ::Math.round((minAttributesSum + maxAttributesSum) / 2.0) + properties[id]
-			};
+			});
 		}
-		local unMovedAttributes = ::array(attributes.len());
-		for (local i = 0; i < attributes.len(); ++i) {
-			unMovedAttributes[i] = {
-				Min = attributes[i].Min - properties[attributeKeys[i]],
-				Max = attributes[i].Max - properties[attributeKeys[i]],
-				Mean = attributes[i].Mean - properties[attributeKeys[i]]
-			}
-		}
-		this.m.Talents = oldTalents;
 		return attributes;
 	}
 })

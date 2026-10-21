@@ -59,6 +59,24 @@
 		::CleverRecruiter.RealRand = null;
 	}
 
+	// the index into ::Const.Attributes (and so into talents and level up arrays) of a base property ID
+	::CleverRecruiter.getAttributeIndex <- function( _id ) {
+		return ::Const.Attributes[_id == "Stamina" ? "Fatigue" : _id];
+	}
+
+	// Calls _function with ::Math.rand switched by _switcheroo, and always switches it back, even if _function throws
+	::CleverRecruiter.callWithRand <- function( _switcheroo, _function, _env ) {
+		_switcheroo();
+		try {
+			_function.call(_env);
+		}
+		catch (error) {
+			::CleverRecruiter.unswitcherooRand();
+			throw error;
+		}
+		::CleverRecruiter.unswitcherooRand();
+	}
+
 
 	::Hooks.registerJS("ui/mods/clever_recruiter/world_town_screen_hire_dialog_module.js");
 	::Hooks.registerCSS("ui/mods/clever_recruiter/css/world_town_screen_hire_dialog_module.css");
