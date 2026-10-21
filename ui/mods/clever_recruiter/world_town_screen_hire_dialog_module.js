@@ -141,7 +141,8 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 		this.mCleverRecruiter.Properties[i].Talents.attr('src', Path.GFX + 'ui/icons/talent_' + values[2] + '.png')
 		if (values[3] != null) // level 11 projections
 		{
-			text += '→' + (values[3].Min == values[3].Max ? values[3].Mean : '~' + values[3].Mean);
+			// the game's font has no arrow character (it showed as a box), so use a right angle quote
+			text += '\u00bb' + (values[3].Min == values[3].Max ? values[3].Mean : '~' + values[3].Mean);
 		}
 		this.mCleverRecruiter.Properties[i].Text.text(text);
 	}
