@@ -94,6 +94,10 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 
 	if (data.IsTryoutDone)
 	{
+		// Legends adds its own talent stars to the traits row after tryout, which we already show (or hide) in our grid
+		if (data.CleverRecruiter.Legends)
+			this.mDetailsPanel.CharacterTraitsContainer.children('span').remove();
+
 		if (MSU.getSettingValue(CleverRecruiter.ID, "Dismiss"))
 		{
 			this.mDetailsPanel.TryoutButton.addClass('display-block').removeClass('display-none');
