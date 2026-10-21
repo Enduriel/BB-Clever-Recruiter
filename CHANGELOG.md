@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.1.7 - 2026-10-21
+
 - Fixed the hire window not opening when a recruit has no level ups left (e.g. high level veterans).
 - Fixed a single recruit Clever Recruiter can't handle stopping the whole hire window from opening: that recruit now just shows the vanilla information, and the error is logged.
 - Restored the attribute order from before 2.1.4 (the same layout as the character screen), without breaking the max level predictions.
