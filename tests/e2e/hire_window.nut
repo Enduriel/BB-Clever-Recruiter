@@ -3,8 +3,8 @@
 // (#150429053) and the traits row after tryout (#175647060).
 // Mods: Modern Hooks, MSU, Clever Recruiter; optionally Reforged and its requirements, or Legends 19.4.22 + its assets.
 // Mode: campaign, with --js hire_window.js (and --shots DIR --size 2560x1440 for a screenshot per recruit).
-// With Legends also pass --preload skip_msu_new_campaign_settings_preload.nut, or MSU's new-campaign settings screen
-// stops the harness's campaign start.
+// "potentials match attributes" checks against the vanilla level up formula, so it lists mismatches with mods that
+// change level ups (Reforged); Clever Recruiter itself runs the loaded fillAttributeLevelUpValues.
 //
 // A passing run prints, among others:
 //   PROBE BaseAttributes keys = [Hitpoints,MeleeSkill,Stamina,RangedSkill,Bravery,MeleeDefense,Initiative,RangedDefense]
