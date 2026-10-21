@@ -83,6 +83,15 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 	if (_element === null || _element.length == 0) return;
 	var data = _element.data('entry');
 
+	// the backend failed to get our information for this recruit, so show what vanilla does
+	if (data.CleverRecruiter === undefined)
+	{
+		this.mCleverRecruiter.Grid.css('display', 'none');
+		this.mDetailsPanel.TryoutButton.findButtonText().text("Try out");
+		return;
+	}
+	this.mCleverRecruiter.Grid.css('display', '');
+
 	if (data.IsTryoutDone)
 	{
 		if (MSU.getSettingValue(CleverRecruiter.ID, "Dismiss"))
@@ -146,7 +155,7 @@ WorldTownScreenHireDialogModule.prototype.updateListEntryValues = function()
 		var traitsContainer = entry.find('.is-traits-container');
 		var data = entry.data('entry');
 
-		if (data.IsTryoutDone)
+		if (data.IsTryoutDone || data.CleverRecruiter === undefined)
 			return;
 
 		if (MSU.getSettingValue(CleverRecruiter.ID, "TraitInfo") == "All")

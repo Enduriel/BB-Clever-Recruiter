@@ -3,7 +3,22 @@
 	q.convertEntityHireInformationToUIData = @(__original) function( _entity )
 	{
 		local ret = __original(_entity);
+		// never let a problem here stop the hire window from opening, it then just shows the vanilla information
+		try {
+			ret.CleverRecruiter <- this.CleverRecruiter_getHireInformation(_entity);
+		}
+		catch (error) {
+			::logError("Clever Recruiter: failed to get the hire information for " + _entity.getName() + ": " + error);
+		}
+		return ret;
+	}
 
+	q.CleverRecruiter_getHireInformation <- function( _entity )
+	{
+		if (::CleverRecruiter.BaseAttributes == null)
+			::CleverRecruiter.initBaseAttributes();
+
+		local ret = {};
 		ret.CleverRecruiter <- {
 			Legends = ::Hooks.hasMod("mod_legends"),
 			Traits = [],
@@ -103,6 +118,6 @@
 			}
 		}
 
-		return ret;
+		return ret.CleverRecruiter;
 	}
 })
