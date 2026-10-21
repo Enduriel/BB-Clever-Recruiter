@@ -1,17 +1,22 @@
-// Reproduces: the hire window not opening / no stats on hire (bug #1010213, comments #155992474, #162492781),
-// and checks the attribute display order (#146915046, #146718021).
-// Mods: Modern Hooks, MSU, Clever Recruiter (optionally Reforged and its requirements). Mode: campaign.
-// Run with hire_window.js (--js), which reports what the hire dialog actually shows.
+// Reproduces: the hire window not opening / no stats on hire (bug #1010213, comments #155992474, #162492781), the
+// attribute display order (#146915046, #146718021), and with Legends the shown maximum below the current value
+// (#150429053) and the traits row after tryout (#175647060).
+// Mods: Modern Hooks, MSU, Clever Recruiter; optionally Reforged and its requirements, or Legends 19.4.22 + its assets.
+// Mode: campaign, with --js hire_window.js (and --shots DIR --size 2560x1440 for a screenshot per recruit).
+// With Legends also pass --preload skip_msu_new_campaign_settings_preload.nut, or MSU's new-campaign settings screen
+// stops the harness's campaign start.
 //
 // A passing run prints, among others:
 //   PROBE BaseAttributes keys = [Hitpoints,MeleeSkill,Stamina,RangedSkill,Bravery,MeleeDefense,Initiative,RangedDefense]
 //   PROBE potentials match attributes = ok
+//   PROBE current above shown max = none
 //   PROBE RealRand (should be null) = (null : 0x00000000)
-//   PROBE hire data = n=<roster size> ...           (no ERROR)
+//   PROBE hire data = n=N ...                       (no ERROR)
 //   PROBE edge levelUpsSpent=10 = [...]             (no THROWS; potentials equal the current values)
 //   PROBE click crowd = ok
-// and from JS: "visible":true, "hasInfo" = true for all but the last entry, eight "texts" of the form
-// "current/max→current" (no level ups left).
+// plus one logged error "Clever Recruiter: failed to get the hire information for ..." for the recruit broken on purpose.
+// From JS: "visible":true, "hasInfo" false only for that recruit, eight "texts" like "59/60»59" for the first one, and
+// for the tried out recruit no talent stars (health.png, talent_N.png) in "traits".
 ::ClaudeProbe.str <- function( _v, _d = 0 )
 {
 	if (_d > 4) return "...";
@@ -107,6 +112,21 @@ p("settings", function() {
 		}
 		return bad.len() == 0 ? "ok" : str(bad);
 	});
+	// The shown maximum of a stat can never be below what the recruit has (#150429053, Legends).
+	p("current above shown max", function() {
+		local bad = [];
+		local keys = ::CleverRecruiter.BaseAttributes.keys();
+		foreach (b in ::World.getRoster(town.getID()).getAll())
+		{
+			local info = ::UIDataHelper.convertEntityHireInformationToUIData(b).CleverRecruiter.Attributes;
+			foreach (i, id in keys)
+			{
+				if (b.getBaseProperties()[id] > info[i][1])
+					bad.push(b.getBackground().getID() + " " + id + " " + b.getBaseProperties()[id] + ">" + info[i][1]);
+			}
+		}
+		return bad.len() == 0 ? "none" : str(bad);
+	});
 	// A recruit with no level ups left before the max level (e.g. a high level veteran).
 	p("edge levelUpsSpent=10", function() {
 		local b = ::World.getRoster(town.getID()).getAll()[0];
@@ -133,6 +153,7 @@ p("settings", function() {
 		local all = ::World.getRoster(town.getID()).getAll();
 		all[0].m.LevelUpsSpent = 10;
 		all[all.len() - 1].m.Talents = [];
+		if (all.len() > 2) all[1].setTryoutDone(true); // to see how a tried out recruit looks
 		return all.len();
 	});
 	p("enterLocation", @() ::World.State.enterLocation(town));
