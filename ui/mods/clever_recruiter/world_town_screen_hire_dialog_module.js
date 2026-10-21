@@ -114,7 +114,7 @@ WorldTownScreenHireDialogModule.prototype.updateDetailsPanel = function (_elemen
 			icon.unbindTooltip();
 			icon.remove();
 		}
-		if (data.CleverRecruiter_IsLegends && MSU.getSettingValue(CleverRecruiter.ID, "ShowPerkGroups"))
+		if (data.CleverRecruiter.Legends && MSU.getSettingValue(CleverRecruiter.ID, "ShowPerkGroups"))
 		{
 			var perkTreesImg = this.mDetailsPanel.CharacterTraitsContainer.find('img[src="' + Path.GFX + 'ui/icons/unknown_perks.png"]').filter(':first');
 			perkTreesImg.attr('src', Path.GFX + 'ui/icons/known_perks.png');
