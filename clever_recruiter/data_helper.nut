@@ -108,7 +108,12 @@
 			}
 		}
 
-		local talents = ret.CleverRecruiter.Attributes.map(@(_e) _e[2]);
+		// the level up calculation needs the talents in the order of ::Const.Attributes, not in display order
+		local talents = ::array(::Const.Attributes.COUNT, 0);
+		foreach (i, id in ::CleverRecruiter.BaseAttributes.keys())
+		{
+			talents[::CleverRecruiter.getAttributeIndex(id)] = ret.CleverRecruiter.Attributes[i][2];
+		}
 		local maxLvlPotentials = ::CleverRecruiter.Mod.ModSettings.getSetting("MaxLvlPotential").getValue() ? _entity.CleverRecruiter_getMaxLvlPotentials(talents) : ::array(8);
 
 		foreach (i, attributeInfo in ret.CleverRecruiter.Attributes)

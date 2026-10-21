@@ -6,14 +6,15 @@
 		tempPlayer.getSkills().add(tempBackground);
 		tempPlayer.setHitpoints = function( _hitpoints ) {}
 		::CleverRecruiter.callWithRand(::CleverRecruiter.switcherooRandMax, tempBackground.buildAttributes, tempBackground);
+		// in display order: two columns, as on the character screen
 		local baseAttributes = ::MSU.Class.OrderedMap();
 		baseAttributes.Hitpoints <- tempPlayer.getBaseProperties().Hitpoints;
-		baseAttributes.Bravery <- tempPlayer.getBaseProperties().Bravery;
-		baseAttributes.Stamina <- tempPlayer.getBaseProperties().Stamina;
-		baseAttributes.Initiative <- tempPlayer.getBaseProperties().Initiative;
 		baseAttributes.MeleeSkill <- tempPlayer.getBaseProperties().MeleeSkill;
+		baseAttributes.Stamina <- tempPlayer.getBaseProperties().Stamina;
 		baseAttributes.RangedSkill <- tempPlayer.getBaseProperties().RangedSkill;
+		baseAttributes.Bravery <- tempPlayer.getBaseProperties().Bravery;
 		baseAttributes.MeleeDefense <- tempPlayer.getBaseProperties().MeleeDefense;
+		baseAttributes.Initiative <- tempPlayer.getBaseProperties().Initiative;
 		baseAttributes.RangedDefense <- tempPlayer.getBaseProperties().RangedDefense;
 		::CleverRecruiter.BaseAttributes = baseAttributes;
 	}
